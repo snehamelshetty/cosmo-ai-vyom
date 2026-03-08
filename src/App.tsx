@@ -55,6 +55,9 @@ const AnimatedRoutes = () => {
           <Route path="/mission-vehicles" element={<MissionVehiclesPage />} />
           <Route path="/galaxy-map" element={<GalaxyMapPage />} />
           <Route path="/sky-viewer" element={<SkyViewerPage />} />
+          <Route path="/mood-journal" element={<MoodJournalPage />} />
+          <Route path="/crew-communication" element={<CrewCommunicationPage />} />
+          <Route path="/environment-monitoring" element={<EnvironmentMonitoringPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
