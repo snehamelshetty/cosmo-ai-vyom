@@ -1,35 +1,35 @@
 import { motion } from "framer-motion";
 import HoloPanel from "./HoloPanel";
+import { Link } from "react-router-dom";
 import {
-  Bot, Brain, Heart, Satellite, Puzzle, AlertTriangle,
-  Users, Headphones, Globe, Zap, BarChart3, Rocket
+  Bot, Brain, Heart, Puzzle, Headphones, Zap, BarChart3, Rocket, Globe, Users, AlertTriangle, Satellite
 } from "lucide-react";
 
 const features = [
-  { icon: Bot, title: "AI Psychological Support", variant: "star" as const,
-    desc: "Conversational AI companion detecting stress, loneliness, and anxiety from voice tone, writing style, and interaction patterns." },
-  { icon: Brain, title: "Mental Health Monitoring", variant: "nebula" as const,
-    desc: "Tracks mood variation, isolation index, stress fluctuations, and motivation levels throughout missions." },
-  { icon: Heart, title: "Physical Health Monitoring", variant: "star" as const,
-    desc: "Integrates biometric sensors for heart rate, O₂ saturation, temperature, hydration, sleep, and fatigue." },
-  { icon: Satellite, title: "Mission Companion AI", variant: "nebula" as const,
-    desc: "Maintains routine with reminders for exercise, work tasks, hydration, sleep, and communication schedules." },
-  { icon: Puzzle, title: "Cognitive Fitness Trainer", variant: "star" as const,
-    desc: "Brain training exercises for memory, focus, reaction speed, spatial awareness, and logic." },
-  { icon: AlertTriangle, title: "Emergency Stabilizer", variant: "nebula" as const,
-    desc: "Activates breathing exercises, grounding techniques, calming visuals, and guided meditation during distress." },
-  { icon: Users, title: "Social Connection Simulator", variant: "star" as const,
-    desc: "Reduces isolation with simulated family conversations, familiar voices, and interactive memories." },
-  { icon: Globe, title: "VR Relaxation Module", variant: "nebula" as const,
-    desc: "Virtual environments — forests, oceans, mountains, night sky — for temporary escape." },
-  { icon: Zap, title: "AI Fatigue Prediction", variant: "star" as const,
-    desc: "Machine learning predicts exhaustion from behavior patterns, biometric data, and sleep cycles." },
-  { icon: BarChart3, title: "Crew Harmony Analyzer", variant: "nebula" as const,
+  { icon: Heart, title: "Health Monitoring", path: "/health-monitoring", variant: "star" as const,
+    desc: "Real-time physical and mental health tracking with biometric sensor integration." },
+  { icon: Zap, title: "AI Fatigue Prediction", path: "/fatigue-prediction", variant: "nebula" as const,
+    desc: "Machine learning predicts exhaustion from behavior patterns, biometrics, and sleep cycles." },
+  { icon: Bot, title: "Psychological Support", path: "/psychological-support", variant: "star" as const,
+    desc: "AI companion detecting stress, loneliness, and anxiety from interaction patterns." },
+  { icon: Puzzle, title: "Cognitive Fitness", path: "/fitness-trainer", variant: "nebula" as const,
+    desc: "Brain training exercises for memory, focus, reaction speed, and spatial awareness." },
+  { icon: Headphones, title: "Sound Therapy", path: "/sound-therapy", variant: "star" as const,
+    desc: "Calming Earth sounds — rainfall, ocean waves, fireplace, forest ambience." },
+  { icon: Globe, title: "3D Galaxy Map", path: "/galaxy-map", variant: "nebula" as const,
+    desc: "Interactive solar system explorer with Stellarium sky viewer integration." },
+  { icon: BarChart3, title: "Before & After Space", path: "/before-after-space", variant: "star" as const,
+    desc: "How space changes the human body — physiological and psychological transformations." },
+  { icon: Rocket, title: "Mission Vehicles", path: "/mission-vehicles", variant: "nebula" as const,
+    desc: "Spacecraft fleet specs and MAITHRI integration — Falcon 9, SLS, Starship, and more." },
+  { icon: Satellite, title: "Mission Companion AI", path: "/", variant: "star" as const,
+    desc: "Maintains routine with reminders for exercise, hydration, sleep, and communication." },
+  { icon: AlertTriangle, title: "Emergency Stabilizer", path: "/", variant: "nebula" as const,
+    desc: "Activates breathing exercises, grounding techniques, and guided meditation during distress." },
+  { icon: Users, title: "Social Connection", path: "/", variant: "star" as const,
+    desc: "Reduces isolation with simulated family conversations and interactive memories." },
+  { icon: Brain, title: "Crew Harmony", path: "/", variant: "nebula" as const,
     desc: "Analyzes communication to detect conflict, tension, and social withdrawal." },
-  { icon: Headphones, title: "Acoustic Relaxation", variant: "star" as const,
-    desc: "Sound therapy with calming Earth sounds — rainfall, ocean waves, fireplace, wind in forest." },
-  { icon: Rocket, title: "Mission Intelligence", variant: "nebula" as const,
-    desc: "Spacecraft specs, crew capacity, mission duration — all integrated with AI wellbeing data." },
 ];
 
 const FeaturesSection = () => {
@@ -43,18 +43,25 @@ const FeaturesSection = () => {
             Core <span className="text-primary text-glow-star">Features</span>
           </h2>
           <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base font-light">
-            A comprehensive AI suite for every aspect of astronaut wellbeing during long-duration space missions.
+            Click any feature to explore it in detail.
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((f, i) => (
-            <HoloPanel key={f.title} variant={f.variant} delay={i * 0.05}
-              className="group hover:scale-[1.02] transition-transform duration-500">
-              <f.icon className={`w-7 h-7 mb-4 ${f.variant === "star" ? "text-primary" : "text-accent"} opacity-70`} />
-              <h3 className="font-orbitron text-xs font-bold text-foreground mb-2 tracking-wider">{f.title}</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
-            </HoloPanel>
+            <Link key={f.title} to={f.path}>
+              <HoloPanel variant={f.variant} delay={i * 0.05}
+                className="group hover:scale-[1.03] transition-transform duration-500 h-full cursor-pointer">
+                <f.icon className={`w-7 h-7 mb-4 ${f.variant === "star" ? "text-primary" : "text-accent"} opacity-70 group-hover:opacity-100 transition-opacity`} />
+                <h3 className="font-orbitron text-xs font-bold text-foreground mb-2 tracking-wider group-hover:text-primary transition-colors">{f.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+                {f.path !== "/" && (
+                  <span className="inline-block mt-3 text-[9px] font-mono text-primary/50 group-hover:text-primary/80 transition-colors tracking-wider">
+                    EXPLORE →
+                  </span>
+                )}
+              </HoloPanel>
+            </Link>
           ))}
         </div>
       </div>

@@ -3,10 +3,6 @@ import NavBar from "@/components/NavBar";
 import HeroSection from "@/components/HeroSection";
 import HealthDashboard from "@/components/HealthDashboard";
 import FeaturesSection from "@/components/FeaturesSection";
-import MissionPhases from "@/components/MissionPhases";
-import RocketSection from "@/components/RocketSection";
-import SpaceChallenges from "@/components/SpaceChallenges";
-import GalaxyMap from "@/components/GalaxyMap";
 import FloatingSpaceElements from "@/components/FloatingSpaceElements";
 import FooterSection from "@/components/FooterSection";
 import RelaxationMode from "@/components/RelaxationMode";
@@ -21,10 +17,6 @@ const Index = () => {
         <HeroSection />
         <HealthDashboard />
         <FeaturesSection />
-        <GalaxyMap />
-        <SpaceChallenges />
-        <MissionPhases />
-        <RocketSection />
         <FooterSection />
       </main>
       <RelaxationMode />
