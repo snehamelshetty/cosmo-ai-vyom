@@ -21,6 +21,9 @@ import BeforeAfterSpacePage from "./pages/BeforeAfterSpacePage";
 import MissionVehiclesPage from "./pages/MissionVehiclesPage";
 import GalaxyMapPage from "./pages/GalaxyMapPage";
 import SkyViewerPage from "./pages/SkyViewerPage";
+import MoodJournalPage from "./pages/MoodJournalPage";
+import CrewCommunicationPage from "./pages/CrewCommunicationPage";
+import EnvironmentMonitoringPage from "./pages/EnvironmentMonitoringPage";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +55,9 @@ const AnimatedRoutes = () => {
           <Route path="/mission-vehicles" element={<MissionVehiclesPage />} />
           <Route path="/galaxy-map" element={<GalaxyMapPage />} />
           <Route path="/sky-viewer" element={<SkyViewerPage />} />
+          <Route path="/mood-journal" element={<MoodJournalPage />} />
+          <Route path="/crew-communication" element={<CrewCommunicationPage />} />
+          <Route path="/environment-monitoring" element={<EnvironmentMonitoringPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
