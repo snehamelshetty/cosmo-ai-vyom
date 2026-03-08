@@ -1,12 +1,25 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import StarField from "@/components/StarField";
+import NavBar from "@/components/NavBar";
+import HeroSection from "@/components/HeroSection";
+import HealthDashboard from "@/components/HealthDashboard";
+import FeaturesSection from "@/components/FeaturesSection";
+import MissionPhases from "@/components/MissionPhases";
+import RocketSection from "@/components/RocketSection";
+import FooterSection from "@/components/FooterSection";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="relative min-h-screen bg-background overflow-x-hidden">
+      <StarField />
+      <NavBar />
+      <main className="relative z-10">
+        <HeroSection />
+        <HealthDashboard />
+        <FeaturesSection />
+        <MissionPhases />
+        <RocketSection />
+        <FooterSection />
+      </main>
     </div>
   );
 };
