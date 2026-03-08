@@ -1,28 +1,27 @@
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import { motion } from "framer-motion";
 
 interface HoloPanelProps {
   children: ReactNode;
   className?: string;
-  variant?: "cyan" | "purple";
+  variant?: "star" | "nebula";
   delay?: number;
 }
 
-const HoloPanel = ({ children, className, variant = "cyan", delay = 0 }: HoloPanelProps) => {
+const HoloPanel = ({ children, className, variant = "star", delay = 0 }: HoloPanelProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay }}
+      transition={{ duration: 0.8, delay }}
       className={cn(
         "rounded-lg p-6 relative overflow-hidden",
-        variant === "cyan" ? "holo-panel glow-cyan" : "holo-panel-purple glow-purple",
+        variant === "star" ? "holo-panel glow-star" : "holo-panel-nebula glow-nebula",
         className
       )}
     >
-      <div className="scan-line absolute inset-0 pointer-events-none" />
       <div className="relative z-10">{children}</div>
     </motion.div>
   );
