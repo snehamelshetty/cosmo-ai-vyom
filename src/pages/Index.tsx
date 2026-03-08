@@ -5,6 +5,8 @@ import FloatingSpaceElements from "@/components/FloatingSpaceElements";
 import FooterSection from "@/components/FooterSection";
 import RelaxationMode from "@/components/RelaxationMode";
 import HealthDashboard from "@/components/HealthDashboard";
+import MissionTimeline from "@/components/MissionTimeline";
+import SpaceDataDashboard from "@/components/SpaceDataDashboard";
 
 const Index = () => {
   return (
@@ -15,6 +17,8 @@ const Index = () => {
       <main className="relative z-10">
         <HeroSection />
         <HealthDashboard />
+        <SpaceDataDashboard />
+        <MissionTimeline />
         <FooterSection />
       </main>
       <RelaxationMode />
