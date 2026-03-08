@@ -1,6 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import HoloPanel from "./HoloPanel";
 import { Rocket, Satellite, Globe, Brain, Shield, Target, Flag } from "lucide-react";
+import { useRef } from "react";
 
 const phases = [
   { year: "2024", title: "Concept & AI Training", desc: "Initial development of MAITHRI AI core, training on astronaut health datasets and biometric patterns.", icon: Brain, status: "complete" },
@@ -24,62 +25,142 @@ const dotColors: Record<string, string> = {
   upcoming: "bg-muted-foreground/30",
 };
 
-const MissionTimeline = () => (
-  <section className="relative py-28 px-6">
-    <div className="container mx-auto max-w-5xl">
-      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-16">
-        <span className="text-primary/60 font-mono text-[10px] tracking-[0.5em] uppercase">Project Roadmap</span>
-        <h2 className="text-4xl md:text-5xl font-orbitron font-bold mt-4 text-foreground">
-          Mission <span className="text-primary text-glow-star">Timeline</span>
-        </h2>
-        <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-sm">
-          From concept to Mars — tracking MAITHRI's journey to becoming humanity's AI companion in deep space.
-        </p>
-      </motion.div>
+const MissionTimeline = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
 
-      <div className="relative">
-        {/* Vertical line */}
-        <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-primary/20 to-transparent" />
+  // Rocket travels from top to bottom of timeline
+  const rocketY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // Trail grows as rocket moves
+  const trailHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // Rocket flame flicker opacity
+  const rocketOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
-        {phases.map((p, i) => {
-          const Icon = p.icon;
-          const isLeft = i % 2 === 0;
-          return (
+  return (
+    <section className="relative py-28 px-6">
+      <div className="container mx-auto max-w-5xl">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-16">
+          <span className="text-primary/60 font-mono text-[10px] tracking-[0.5em] uppercase">Project Roadmap</span>
+          <h2 className="text-4xl md:text-5xl font-orbitron font-bold mt-4 text-foreground">
+            Mission <span className="text-primary text-glow-star">Timeline</span>
+          </h2>
+          <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-sm">
+            From concept to Mars — tracking MAITHRI's journey to becoming humanity's AI companion in deep space.
+          </p>
+        </motion.div>
+
+        <div className="relative" ref={containerRef}>
+          {/* Background track line (dim) */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-border/20 -translate-x-px" />
+
+          {/* Animated glowing trail that fills as you scroll */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px -translate-x-px overflow-hidden">
             <motion.div
-              key={p.year}
-              initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.6 }}
-              className={`relative flex items-start mb-10 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}
-            >
-              {/* Dot */}
-              <div className={`absolute left-6 md:left-1/2 w-3 h-3 rounded-full ${dotColors[p.status]} -translate-x-1.5 mt-6 z-10`} />
+              className="w-full bg-gradient-to-b from-primary via-primary/60 to-primary/20"
+              style={{ height: trailHeight }}
+            />
+          </div>
 
-              {/* Card */}
-              <div className={`ml-14 md:ml-0 md:w-[calc(50%-2rem)] ${isLeft ? "md:pr-8 md:text-right" : "md:pl-8"}`}>
-                <HoloPanel variant={p.status === "active" ? "star" : "nebula"} className="relative">
-                  <div className={`flex items-center gap-3 mb-2 ${isLeft ? "md:flex-row-reverse" : ""}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${statusColors[p.status]}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-orbitron text-xs font-bold text-primary tracking-wider">{p.year}</p>
-                      <p className="font-orbitron text-sm font-bold text-foreground">{p.title}</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{p.desc}</p>
-                  <span className={`inline-block mt-2 text-[9px] font-mono px-2 py-0.5 rounded border ${statusColors[p.status]}`}>
-                    {p.status.toUpperCase()}
-                  </span>
-                </HoloPanel>
+          {/* Exhaust particles along the trail */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 -translate-x-[3px] overflow-hidden pointer-events-none" style={{ width: 7 }}>
+            <motion.div
+              className="w-full"
+              style={{ height: trailHeight }}
+            >
+              <div className="w-full h-full relative">
+                {[...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full bg-primary/40"
+                    style={{
+                      top: `${(i / 12) * 100}%`,
+                      left: `${Math.sin(i * 2.5) * 3 + 3}px`,
+                    }}
+                    animate={{ opacity: [0.2, 0.6, 0.2], scale: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5 + i * 0.1, repeat: Infinity, delay: i * 0.15 }}
+                  />
+                ))}
               </div>
             </motion.div>
-          );
-        })}
+          </div>
+
+          {/* Scroll-driven Rocket */}
+          <motion.div
+            className="absolute left-6 md:left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+            style={{ top: rocketY, opacity: rocketOpacity }}
+          >
+            <div className="relative flex flex-col items-center -translate-y-1/2">
+              {/* Rocket body */}
+              <div className="relative">
+                <Rocket className="w-6 h-6 text-primary rotate-180 drop-shadow-[0_0_8px_hsl(var(--primary))]" />
+              </div>
+              {/* Rocket flame */}
+              <div className="flex flex-col items-center -mt-1">
+                <motion.div
+                  className="w-2 h-4 rounded-b-full"
+                  style={{
+                    background: "linear-gradient(to bottom, hsl(var(--primary)), hsl(30 100% 60%), hsl(15 100% 50%), transparent)",
+                  }}
+                  animate={{ scaleY: [0.8, 1.2, 0.9, 1.1], scaleX: [1, 0.8, 1.1, 0.9], opacity: [0.9, 1, 0.8, 1] }}
+                  transition={{ duration: 0.3, repeat: Infinity }}
+                />
+                <motion.div
+                  className="w-1 h-2 rounded-b-full -mt-1"
+                  style={{
+                    background: "linear-gradient(to bottom, hsl(30 100% 60% / 0.6), transparent)",
+                  }}
+                  animate={{ scaleY: [1, 0.6, 1.2], opacity: [0.6, 0.3, 0.6] }}
+                  transition={{ duration: 0.2, repeat: Infinity }}
+                />
+              </div>
+              {/* Glow underneath */}
+              <div className="absolute top-4 w-8 h-8 rounded-full bg-primary/20 blur-lg" />
+            </div>
+          </motion.div>
+
+          {phases.map((p, i) => {
+            const Icon = p.icon;
+            const isLeft = i % 2 === 0;
+            return (
+              <motion.div
+                key={p.year}
+                initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.6 }}
+                className={`relative flex items-start mb-10 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}
+              >
+                {/* Dot */}
+                <div className={`absolute left-6 md:left-1/2 w-3 h-3 rounded-full ${dotColors[p.status]} -translate-x-1.5 mt-6 z-10 ring-2 ring-background`} />
+
+                {/* Card */}
+                <div className={`ml-14 md:ml-0 md:w-[calc(50%-2rem)] ${isLeft ? "md:pr-8 md:text-right" : "md:pl-8"}`}>
+                  <HoloPanel variant={p.status === "active" ? "star" : "nebula"} className="relative">
+                    <div className={`flex items-center gap-3 mb-2 ${isLeft ? "md:flex-row-reverse" : ""}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${statusColors[p.status]}`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="font-orbitron text-xs font-bold text-primary tracking-wider">{p.year}</p>
+                        <p className="font-orbitron text-sm font-bold text-foreground">{p.title}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{p.desc}</p>
+                    <span className={`inline-block mt-2 text-[9px] font-mono px-2 py-0.5 rounded border ${statusColors[p.status]}`}>
+                      {p.status.toUpperCase()}
+                    </span>
+                  </HoloPanel>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default MissionTimeline;
