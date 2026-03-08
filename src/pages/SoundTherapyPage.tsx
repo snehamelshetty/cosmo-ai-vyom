@@ -210,16 +210,31 @@ const SoundTherapyPage = () => {
             {soundScapes.map((s, i) => (
               <HoloPanel key={s.name} variant={i % 2 === 0 ? "star" : "nebula"} delay={i * 0.05}>
                 <button onClick={() => activeSound === s.name ? stopSound() : startSound(s)}
-                  className="w-full text-left">
+                  className="w-full text-left group">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl">{s.emoji}</span>
-                    {activeSound === s.name && (
-                      <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}
-                        className="w-2 h-2 rounded-full bg-glow-green" />
-                    )}
+                    <div className="flex items-center gap-2">
+                      {activeSound === s.name ? (
+                        <Pause className="w-4 h-4 text-glow-green" />
+                      ) : (
+                        <Play className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      )}
+                    </div>
                   </div>
                   <h3 className="font-orbitron text-xs font-bold text-foreground mb-1">{s.name}</h3>
-                  <p className="text-[10px] text-muted-foreground">{s.desc}</p>
+                  <p className="text-[10px] text-muted-foreground mb-2">{s.desc}</p>
+                  {/* Progress bar */}
+                  <div className="h-1 rounded-full bg-muted overflow-hidden">
+                    {activeSound === s.name ? (
+                      <motion.div
+                        className="h-full rounded-full bg-glow-green/60"
+                        animate={{ width: ["0%", "100%"] }}
+                        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                      />
+                    ) : (
+                      <div className="h-full w-0 rounded-full bg-primary/30" />
+                    )}
+                  </div>
                 </button>
               </HoloPanel>
             ))}
