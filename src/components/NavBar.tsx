@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from "react";
 
 const mainLinks = [
   { label: "Home", path: "/" },
-  { label: "Galaxy Map", path: "/galaxy-map" },
   { label: "Mission Vehicles", path: "/mission-vehicles" },
   { label: "Before vs After", path: "/before-after-space" },
   { label: "Sky Viewer", path: "/sky-viewer" },

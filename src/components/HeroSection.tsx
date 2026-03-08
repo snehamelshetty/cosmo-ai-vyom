@@ -84,14 +84,10 @@ const HeroSection = () => {
             className="px-10 py-3.5 rounded-lg border border-glow text-primary font-orbitron font-medium text-xs tracking-[0.2em] hover:bg-primary/5 transition-all duration-500 glow-star">
             EXPLORE FEATURES
           </Link>
-          <Link to="/galaxy-map"
-            className="px-10 py-3.5 rounded-lg border border-glow-nebula text-accent font-orbitron font-medium text-xs tracking-[0.2em] hover:bg-accent/5 transition-all duration-500 glow-nebula">
-            3D GALAXY MAP
-          </Link>
-          <Link to="/health-monitoring"
+          <a href="#dashboard"
             className="px-10 py-3.5 rounded-lg bg-primary/8 border border-glow text-foreground/80 font-orbitron font-medium text-xs tracking-[0.2em] hover:bg-primary/12 transition-all duration-500">
-            HEALTH MONITOR
-          </Link>
+            HEALTH DASHBOARD
+          </a>
         </motion.div>
       </motion.div>
 

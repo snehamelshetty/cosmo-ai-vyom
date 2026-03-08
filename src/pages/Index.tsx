@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import FloatingSpaceElements from "@/components/FloatingSpaceElements";
 import FooterSection from "@/components/FooterSection";
 import RelaxationMode from "@/components/RelaxationMode";
+import HealthDashboard from "@/components/HealthDashboard";
 
 const Index = () => {
   return (
@@ -13,6 +14,7 @@ const Index = () => {
       <NavBar />
       <main className="relative z-10">
         <HeroSection />
+        <HealthDashboard />
         <FooterSection />
       </main>
       <RelaxationMode />
