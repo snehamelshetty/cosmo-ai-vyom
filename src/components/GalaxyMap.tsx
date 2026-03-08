@@ -181,8 +181,7 @@ const GalaxyMap = () => {
             </motion.div>
           )}
         </motion.div>
-      </div>
-    </section>
+    </div>
   );
 };
 
