@@ -2,16 +2,17 @@ import { Heart, Brain, Moon, Wind, Zap, Thermometer, Droplets, Eye } from "lucid
 import MetricCard from "./MetricCard";
 import HoloPanel from "./HoloPanel";
 import { motion } from "framer-motion";
+import nebulaBg from "@/assets/nebula-section.jpg";
 
 const metrics = [
   { icon: Heart, label: "Heart Rate", value: "72", unit: "bpm", color: "red" as const },
-  { icon: Brain, label: "Cognitive Score", value: "87", unit: "/ 100", color: "purple" as const },
+  { icon: Brain, label: "Cognitive Score", value: "87", unit: "/ 100", color: "nebula" as const },
   { icon: Moon, label: "Sleep Quality", value: "82", unit: "%", color: "blue" as const },
-  { icon: Wind, label: "O₂ Saturation", value: "98", unit: "%", color: "cyan" as const },
+  { icon: Wind, label: "O₂ Saturation", value: "98", unit: "%", color: "star" as const },
   { icon: Zap, label: "Energy Level", value: "76", unit: "%", color: "orange" as const },
   { icon: Thermometer, label: "Body Temp", value: "36.6", unit: "°C", color: "green" as const },
   { icon: Droplets, label: "Hydration", value: "91", unit: "%", color: "blue" as const },
-  { icon: Eye, label: "Focus Index", value: "89", unit: "/ 100", color: "cyan" as const },
+  { icon: Eye, label: "Focus Index", value: "89", unit: "/ 100", color: "star" as const },
 ];
 
 const emotionalState = [
@@ -32,146 +33,124 @@ const crewMembers = [
 
 const HealthDashboard = () => {
   return (
-    <section id="dashboard" className="relative py-24 px-6">
-      <div className="container mx-auto max-w-7xl">
+    <section id="dashboard" className="relative py-32 px-6">
+      {/* Nebula background accent */}
+      <div className="absolute inset-0 overflow-hidden opacity-20">
+        <img src={nebulaBg} alt="" className="w-full h-full object-cover" style={{ filter: "blur(40px)" }} />
+      </div>
+
+      <div className="container mx-auto max-w-7xl relative z-10">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <span className="text-primary font-mono text-sm tracking-widest">📊 SYSTEM STATUS</span>
+          <span className="text-primary/60 font-mono text-[10px] tracking-[0.5em] uppercase">System Status</span>
           <h2 className="text-4xl md:text-5xl font-orbitron font-bold mt-4 text-foreground">
-            Astronaut Health <span className="text-primary text-glow-cyan">Dashboard</span>
+            Health <span className="text-primary text-glow-star">Dashboard</span>
           </h2>
         </motion.div>
 
-        {/* Vital Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {metrics.map((m, i) => (
             <MetricCard key={m.label} {...m} delay={i * 0.1} />
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Stress Analysis */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-10">
           <HoloPanel>
-            <h3 className="font-orbitron text-lg font-bold text-foreground mb-4">⚠ Stress Analysis</h3>
+            <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 tracking-wider">STRESS ANALYSIS</h3>
             <div className="flex items-center gap-6 mb-4">
               <div className="relative w-24 h-24">
                 <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(215 30% 16%)" strokeWidth="8" />
-                  <circle
-                    cx="50" cy="50" r="40" fill="none"
-                    stroke="hsl(185 100% 50%)" strokeWidth="8"
-                    strokeDasharray={`${34 * 2.51} ${100 * 2.51}`}
-                    strokeLinecap="round"
-                  />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(240 15% 12%)" strokeWidth="6" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(220 60% 70%)" strokeWidth="6"
+                    strokeDasharray={`${34 * 2.51} ${100 * 2.51}`} strokeLinecap="round" opacity="0.7" />
                 </svg>
                 <span className="absolute inset-0 flex items-center justify-center font-orbitron text-xl font-bold text-primary">34</span>
               </div>
               <div>
-                <p className="text-muted-foreground text-sm font-mono">STRESS SCORE</p>
+                <p className="text-muted-foreground text-xs font-mono tracking-wider">STRESS SCORE</p>
                 <p className="text-2xl font-orbitron font-bold text-foreground">34 <span className="text-sm text-muted-foreground">/ 100</span></p>
-                <p className="text-glow-green text-sm mt-1 text-glow-green font-mono">● Nominal — Low stress detected</p>
+                <p className="text-glow-green text-xs mt-1 font-mono">● Nominal — Low stress</p>
               </div>
             </div>
           </HoloPanel>
 
-          {/* Emotional State */}
-          <HoloPanel variant="purple">
-            <h3 className="font-orbitron text-lg font-bold text-foreground mb-4">😊 Emotional State</h3>
+          <HoloPanel variant="nebula">
+            <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 tracking-wider">EMOTIONAL STATE</h3>
             <div className="space-y-3">
               {emotionalState.map((e) => (
                 <div key={e.label} className="flex items-center gap-3">
-                  <span className="w-20 text-sm text-muted-foreground font-mono">{e.label}</span>
-                  <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                  <span className="w-20 text-xs text-muted-foreground font-mono">{e.label}</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${e.value}%` }}
                       viewport={{ once: true }}
-                      transition={{ duration: 1, delay: 0.3 }}
-                      className={`h-full rounded-full ${e.color}`}
+                      transition={{ duration: 1.2, delay: 0.3 }}
+                      className={`h-full rounded-full ${e.color} opacity-70`}
                     />
                   </div>
-                  <span className="text-sm font-mono text-foreground w-10 text-right">{e.value}%</span>
+                  <span className="text-xs font-mono text-foreground/70 w-10 text-right">{e.value}%</span>
                 </div>
               ))}
             </div>
           </HoloPanel>
         </div>
 
-        {/* Simulated Charts */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid lg:grid-cols-3 gap-6 mb-10">
           <HoloPanel className="lg:col-span-2">
-            <h3 className="font-orbitron text-sm font-bold text-foreground mb-4">❤️ Heart Rate Monitor</h3>
-            <div className="h-32 flex items-end gap-1">
-              {[68, 72, 70, 75, 73, 71, 69, 74, 72, 70, 68, 73, 75, 72, 70, 69, 71, 74, 72, 70, 68, 72, 73, 71].map((v, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${((v - 60) / 20) * 100}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.03 }}
-                  className="flex-1 rounded-t bg-gradient-to-t from-glow-red/60 to-glow-red"
+            <h3 className="font-orbitron text-xs font-bold text-foreground mb-4 tracking-wider">HEART RATE MONITOR</h3>
+            <div className="h-28 flex items-end gap-[2px]">
+              {[68, 72, 70, 75, 73, 71, 69, 74, 72, 70, 68, 73, 75, 72, 70, 69, 71, 74, 72, 70, 68, 72, 73, 71, 70, 72, 74, 69, 71, 73].map((v, i) => (
+                <motion.div key={i} initial={{ height: 0 }} whileInView={{ height: `${((v - 60) / 20) * 100}%` }}
+                  viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.02 }}
+                  className="flex-1 rounded-t bg-gradient-to-t from-glow-red/30 to-glow-red/60"
                 />
               ))}
             </div>
-            <div className="flex justify-between mt-2 text-xs text-muted-foreground font-mono">
+            <div className="flex justify-between mt-2 text-[10px] text-muted-foreground font-mono">
               <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
             </div>
           </HoloPanel>
 
-          <HoloPanel>
-            <h3 className="font-orbitron text-sm font-bold text-foreground mb-4">😊 Weekly Mood</h3>
-            <div className="h-32 flex items-end gap-2">
-              {[
-                { day: "M", val: 75 },
-                { day: "T", val: 82 },
-                { day: "W", val: 78 },
-                { day: "T", val: 85 },
-                { day: "F", val: 80 },
-                { day: "S", val: 88 },
-                { day: "S", val: 90 },
-              ].map((d, i) => (
+          <HoloPanel variant="nebula">
+            <h3 className="font-orbitron text-xs font-bold text-foreground mb-4 tracking-wider">WEEKLY MOOD</h3>
+            <div className="h-28 flex items-end gap-2">
+              {[{ day: "M", val: 75 }, { day: "T", val: 82 }, { day: "W", val: 78 }, { day: "T", val: 85 },
+                { day: "F", val: 80 }, { day: "S", val: 88 }, { day: "S", val: 90 }].map((d, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <motion.div
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${d.val}%` }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: i * 0.08 }}
-                    className="w-full rounded-t bg-gradient-to-t from-accent/60 to-accent"
+                  <motion.div initial={{ height: 0 }} whileInView={{ height: `${d.val}%` }}
+                    viewport={{ once: true }} transition={{ duration: 0.7, delay: i * 0.08 }}
+                    className="w-full rounded-t bg-gradient-to-t from-accent/30 to-accent/60"
                   />
-                  <span className="text-xs text-muted-foreground font-mono">{d.day}</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">{d.day}</span>
                 </div>
               ))}
             </div>
           </HoloPanel>
         </div>
 
-        {/* Crew Status */}
         <HoloPanel>
-          <h3 className="font-orbitron text-lg font-bold text-foreground mb-6">👨‍🚀 Crew Status Overview</h3>
+          <h3 className="font-orbitron text-sm font-bold text-foreground mb-6 tracking-wider">CREW STATUS</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {crewMembers.map((c, i) => (
-              <motion.div
-                key={c.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-muted/30 rounded-lg p-4 border border-border"
+              <motion.div key={c.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="bg-muted/20 rounded-lg p-4 border border-border/50"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-orbitron text-primary text-sm font-bold">
+                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-orbitron text-primary text-xs font-bold">
                     {c.name.split(" ").pop()?.[0]}
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-foreground">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.role}</p>
+                    <p className="font-bold text-xs text-foreground">{c.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{c.role}</p>
                   </div>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2 text-[10px]">
                   {[
                     { label: "Mental", val: c.mental, color: "bg-glow-green" },
                     { label: "Fatigue", val: c.fatigue, color: "bg-glow-orange" },
@@ -180,10 +159,10 @@ const HealthDashboard = () => {
                   ].map((s) => (
                     <div key={s.label} className="flex items-center gap-2">
                       <span className="w-14 text-muted-foreground font-mono">{s.label}</span>
-                      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                        <div className={`h-full rounded-full ${s.color}`} style={{ width: `${s.val}%` }} />
+                      <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                        <div className={`h-full rounded-full ${s.color} opacity-60`} style={{ width: `${s.val}%` }} />
                       </div>
-                      <span className="w-8 text-right font-mono text-foreground">{s.val}%</span>
+                      <span className="w-8 text-right font-mono text-foreground/60">{s.val}%</span>
                     </div>
                   ))}
                 </div>

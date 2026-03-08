@@ -6,6 +6,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import MissionPhases from "@/components/MissionPhases";
 import RocketSection from "@/components/RocketSection";
 import FooterSection from "@/components/FooterSection";
+import RelaxationMode from "@/components/RelaxationMode";
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
         <RocketSection />
         <FooterSection />
       </main>
+      <RelaxationMode />
     </div>
   );
 };
