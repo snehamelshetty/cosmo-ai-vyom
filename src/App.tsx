@@ -21,6 +21,9 @@ import BeforeAfterSpacePage from "./pages/BeforeAfterSpacePage";
 import MissionVehiclesPage from "./pages/MissionVehiclesPage";
 import GalaxyMapPage from "./pages/GalaxyMapPage";
 import SkyViewerPage from "./pages/SkyViewerPage";
+import MoodJournalPage from "./pages/MoodJournalPage";
+import CrewCommunicationPage from "./pages/CrewCommunicationPage";
+import EnvironmentMonitoringPage from "./pages/EnvironmentMonitoringPage";
 
 const queryClient = new QueryClient();
 
