@@ -109,8 +109,7 @@ const GalaxyMap = () => {
   const selectedInfo = planetData.find(p => p.name === selectedPlanet);
 
   return (
-    <section id="galaxy" className="relative py-32 px-6">
-      <div className="container mx-auto max-w-7xl">
+    <div className="relative">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
