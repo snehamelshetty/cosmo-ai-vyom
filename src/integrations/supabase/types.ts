@@ -14,7 +14,146 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      crew_health_data: {
+        Row: {
+          activity_level: string | null
+          body_temperature: number | null
+          created_at: string
+          crew_member: string
+          device_id: string | null
+          heart_rate: number | null
+          hydration: number | null
+          id: string
+          is_simulated: boolean
+          oxygen_level: number | null
+          recorded_at: string
+          sleep_quality: number | null
+          stress_level: number | null
+        }
+        Insert: {
+          activity_level?: string | null
+          body_temperature?: number | null
+          created_at?: string
+          crew_member: string
+          device_id?: string | null
+          heart_rate?: number | null
+          hydration?: number | null
+          id?: string
+          is_simulated?: boolean
+          oxygen_level?: number | null
+          recorded_at?: string
+          sleep_quality?: number | null
+          stress_level?: number | null
+        }
+        Update: {
+          activity_level?: string | null
+          body_temperature?: number | null
+          created_at?: string
+          crew_member?: string
+          device_id?: string | null
+          heart_rate?: number | null
+          hydration?: number | null
+          id?: string
+          is_simulated?: boolean
+          oxygen_level?: number | null
+          recorded_at?: string
+          sleep_quality?: number | null
+          stress_level?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crew_health_data_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "iot_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      health_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          alert_type: string
+          created_at: string
+          crew_member: string
+          id: string
+          is_acknowledged: boolean
+          message: string
+          metric_name: string | null
+          metric_value: number | null
+          severity: string
+          threshold_value: number | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          alert_type: string
+          created_at?: string
+          crew_member: string
+          id?: string
+          is_acknowledged?: boolean
+          message: string
+          metric_name?: string | null
+          metric_value?: number | null
+          severity?: string
+          threshold_value?: number | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          alert_type?: string
+          created_at?: string
+          crew_member?: string
+          id?: string
+          is_acknowledged?: boolean
+          message?: string
+          metric_name?: string | null
+          metric_value?: number | null
+          severity?: string
+          threshold_value?: number | null
+        }
+        Relationships: []
+      }
+      iot_devices: {
+        Row: {
+          battery_level: number | null
+          created_at: string
+          crew_member: string
+          device_name: string
+          device_type: string
+          firmware_version: string | null
+          id: string
+          is_connected: boolean
+          last_sync_at: string | null
+          signal_strength: number | null
+          updated_at: string
+        }
+        Insert: {
+          battery_level?: number | null
+          created_at?: string
+          crew_member: string
+          device_name: string
+          device_type?: string
+          firmware_version?: string | null
+          id?: string
+          is_connected?: boolean
+          last_sync_at?: string | null
+          signal_strength?: number | null
+          updated_at?: string
+        }
+        Update: {
+          battery_level?: number | null
+          created_at?: string
+          crew_member?: string
+          device_name?: string
+          device_type?: string
+          firmware_version?: string | null
+          id?: string
+          is_connected?: boolean
+          last_sync_at?: string | null
+          signal_strength?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +162,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      crew_role:
+        | "commander"
+        | "pilot"
+        | "engineer"
+        | "scientist"
+        | "medical_officer"
+        | "specialist"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +295,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      crew_role: [
+        "commander",
+        "pilot",
+        "engineer",
+        "scientist",
+        "medical_officer",
+        "specialist",
+      ],
+    },
   },
 } as const
