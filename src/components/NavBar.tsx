@@ -6,9 +6,6 @@ import { useState, useRef, useEffect } from "react";
 const mainLinks = [
   { label: "Home", path: "/" },
   { label: "Health Monitoring", path: "/health-monitoring" },
-  { label: "Mood Journal", path: "/mood-journal" },
-  { label: "Crew Comms", path: "/crew-communication" },
-  { label: "Environment", path: "/environment-monitoring" },
   { label: "Mission Vehicles", path: "/mission-vehicles" },
   { label: "Before vs After", path: "/before-after-space" },
   { label: "Sky Viewer", path: "/sky-viewer" },
@@ -16,6 +13,9 @@ const mainLinks = [
 ];
 
 const featureLinks = [
+  { label: "Mood Journal", path: "/mood-journal" },
+  { label: "Crew Communication", path: "/crew-communication" },
+  { label: "Environment Monitoring", path: "/environment-monitoring" },
   { label: "Acoustic Relaxation", path: "/sound-therapy" },
   { label: "AI Fatigue Prediction", path: "/fatigue-prediction" },
   { label: "Cognitive Fitness Trainer", path: "/fitness-trainer" },
