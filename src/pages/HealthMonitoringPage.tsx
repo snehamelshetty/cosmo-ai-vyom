@@ -1,12 +1,34 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Brain, Moon, Activity, AlertTriangle, Shield, Users, Zap, Radio } from "lucide-react";
+import { 
+  Heart, Brain, Moon, Activity, AlertTriangle, Shield, Users, Zap, Radio,
+  Wifi, WifiOff, Battery, BatteryLow, Signal, Cpu, ToggleLeft, ToggleRight,
+  Smartphone, CheckCircle2, XCircle, Clock, Database
+} from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import HoloPanel from "@/components/HoloPanel";
+import { Switch } from "@/components/ui/switch";
 import {
   LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis,
   ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, PolarRadiusAxis,
 } from "recharts";
+import {
+  generateSimulatedData,
+  fetchLatestHealthData,
+  fetchDevices,
+  fetchHealthAlerts,
+  acknowledgeAlert,
+  insertSimulatedData,
+  subscribeToHealthData,
+  subscribeToDeviceUpdates,
+  subscribeToAlerts,
+  getApiEndpoint,
+  generateEsp32CodeSnippet,
+  type IoTDevice,
+  type HealthAlert,
+  type HealthMetrics,
+} from "@/services/iotHealthService";
+import { toast } from "sonner";
 
 // ─── Helper: clamp + jitter ─────────────────────────────────
 const jitter = (base: number, range: number, min = 0, max = 100) =>
@@ -106,6 +128,8 @@ interface LiveCrewData {
   emotional: Record<string, number>;
   cognitive: { metric: string; value: number }[];
   aiStatus: string;
+  hydration: number;
+  sleepQuality: number;
 }
 
 const generateLiveData = (profile: typeof crewProfiles[0]): LiveCrewData => {
@@ -129,6 +153,8 @@ const generateLiveData = (profile: typeof crewProfiles[0]): LiveCrewData => {
       : stress < 40
       ? "Caution — Elevated stress markers"
       : "Alert — High stress level",
+    hydration: Math.round(jitter(80, 15, 50, 100)),
+    sleepQuality: Math.round(jitter(75, 20, 40, 100)),
   };
 };
 
@@ -166,18 +192,326 @@ const StressGauge = ({ value }: { value: number }) => {
 };
 
 // ─── Live Pulse Indicator ────────────────────────────────────
-const LiveIndicator = ({ lastUpdate }: { lastUpdate: number }) => {
+const LiveIndicator = ({ lastUpdate, isLive }: { lastUpdate: number; isLive: boolean }) => {
   const seconds = Math.max(0, Math.floor((Date.now() - lastUpdate) / 1000));
   return (
     <div className="flex items-center gap-2">
       <span className="relative flex h-2.5 w-2.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-glow-green opacity-75" />
-        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-glow-green" />
+        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isLive ? 'bg-glow-blue' : 'bg-glow-green'}`} />
+        <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isLive ? 'bg-glow-blue' : 'bg-glow-green'}`} />
       </span>
-      <span className="text-[9px] font-mono text-glow-green tracking-wider">
-        LIVE — {seconds < 2 ? "NOW" : `${seconds}s ago`}
+      <span className={`text-[9px] font-mono tracking-wider ${isLive ? 'text-glow-blue' : 'text-glow-green'}`}>
+        {isLive ? 'LIVE IOT' : 'SIMULATED'} — {seconds < 2 ? "NOW" : `${seconds}s ago`}
       </span>
     </div>
+  );
+};
+
+// ─── Device Status Panel ─────────────────────────────────────
+const DeviceStatusPanel = ({ devices, isLiveMode }: { devices: IoTDevice[]; isLiveMode: boolean }) => {
+  const getTimeSince = (timestamp: string | null) => {
+    if (!timestamp) return 'Never';
+    const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
+    if (seconds < 60) return `${seconds}s ago`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    return `${Math.floor(seconds / 3600)}h ago`;
+  };
+
+  const getBatteryIcon = (level: number) => {
+    if (level < 20) return <BatteryLow className="w-3.5 h-3.5 text-glow-red" />;
+    return <Battery className="w-3.5 h-3.5 text-glow-green" />;
+  };
+
+  const getSignalBars = (strength: number) => {
+    const bars = Math.ceil(strength / 25);
+    return (
+      <div className="flex gap-0.5 items-end h-3">
+        {[1, 2, 3, 4].map((bar) => (
+          <div
+            key={bar}
+            className={`w-1 rounded-sm transition-all ${
+              bar <= bars ? 'bg-glow-green' : 'bg-muted'
+            }`}
+            style={{ height: `${bar * 25}%` }}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  // Simulated devices when in demo mode
+  const demoDevices: IoTDevice[] = [
+    {
+      id: 'demo-1',
+      device_name: 'Astronaut Wearable Sensor',
+      device_type: 'wearable_sensor',
+      crew_member: 'Commander',
+      is_connected: true,
+      battery_level: 82,
+      signal_strength: 95,
+      firmware_version: 'v2.1.4',
+      last_sync_at: new Date(Date.now() - 2000).toISOString(),
+    },
+    {
+      id: 'demo-2',
+      device_name: 'Biomedical Monitor',
+      device_type: 'medical_device',
+      crew_member: 'Engineer',
+      is_connected: true,
+      battery_level: 67,
+      signal_strength: 78,
+      firmware_version: 'v1.8.2',
+      last_sync_at: new Date(Date.now() - 5000).toISOString(),
+    },
+    {
+      id: 'demo-3',
+      device_name: 'Sleep Tracker',
+      device_type: 'sleep_monitor',
+      crew_member: 'Scientist',
+      is_connected: false,
+      battery_level: 45,
+      signal_strength: 0,
+      firmware_version: 'v1.5.0',
+      last_sync_at: new Date(Date.now() - 3600000).toISOString(),
+    },
+  ];
+
+  const displayDevices = isLiveMode && devices.length > 0 ? devices : demoDevices;
+
+  return (
+    <HoloPanel variant="nebula">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-orbitron text-[10px] font-bold text-foreground tracking-wider flex items-center gap-2">
+          <Cpu className="w-3.5 h-3.5 text-primary" /> IOT DEVICE STATUS
+        </h3>
+        <span className={`text-[9px] font-mono px-2 py-0.5 rounded ${isLiveMode ? 'bg-glow-blue/20 text-glow-blue' : 'bg-muted text-muted-foreground'}`}>
+          {displayDevices.filter(d => d.is_connected).length}/{displayDevices.length} ONLINE
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {displayDevices.map((device) => (
+          <motion.div
+            key={device.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`rounded-lg p-3 border transition-all ${
+              device.is_connected
+                ? 'border-glow-green/30 bg-glow-green/5'
+                : 'border-border/30 bg-muted/10'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                  device.is_connected ? 'bg-glow-green/20' : 'bg-muted'
+                }`}>
+                  <Smartphone className={`w-4 h-4 ${device.is_connected ? 'text-glow-green' : 'text-muted-foreground'}`} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold text-foreground truncate">{device.device_name}</p>
+                  <p className="text-[9px] text-muted-foreground truncate">{device.crew_member}</p>
+                </div>
+              </div>
+              {device.is_connected ? (
+                <CheckCircle2 className="w-4 h-4 text-glow-green shrink-0" />
+              ) : (
+                <XCircle className="w-4 h-4 text-muted-foreground shrink-0" />
+              )}
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mt-3 text-[9px] font-mono">
+              <div className="flex items-center gap-1">
+                {getBatteryIcon(device.battery_level)}
+                <span className={device.battery_level < 20 ? 'text-glow-red' : 'text-foreground'}>
+                  {device.battery_level}%
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                {getSignalBars(device.signal_strength)}
+                <span className="text-muted-foreground">{device.signal_strength}%</span>
+              </div>
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Clock className="w-3 h-3" />
+                <span>{getTimeSince(device.last_sync_at)}</span>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {!isLiveMode && (
+        <div className="mt-4 p-2 rounded-lg border border-dashed border-primary/30 bg-primary/5">
+          <p className="text-[9px] font-mono text-primary/80 text-center">
+            Demo Mode — Connect real IoT devices to see live data
+          </p>
+        </div>
+      )}
+    </HoloPanel>
+  );
+};
+
+// ─── Data Mode Toggle ────────────────────────────────────────
+const DataModeToggle = ({ isLive, onToggle }: { isLive: boolean; onToggle: () => void }) => (
+  <div className="flex items-center gap-3 p-3 rounded-xl border border-border/30 bg-card/50">
+    <div className="flex items-center gap-2">
+      {isLive ? <Wifi className="w-4 h-4 text-glow-blue" /> : <WifiOff className="w-4 h-4 text-muted-foreground" />}
+      <span className="text-[10px] font-mono text-muted-foreground">DATA SOURCE</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <span className={`text-[10px] font-mono ${!isLive ? 'text-glow-green' : 'text-muted-foreground'}`}>
+        SIMULATED
+      </span>
+      <Switch checked={isLive} onCheckedChange={onToggle} />
+      <span className={`text-[10px] font-mono ${isLive ? 'text-glow-blue' : 'text-muted-foreground'}`}>
+        LIVE IOT
+      </span>
+    </div>
+  </div>
+);
+
+// ─── API Info Panel ──────────────────────────────────────────
+const ApiInfoPanel = ({ showCode, onToggle }: { showCode: boolean; onToggle: () => void }) => {
+  const endpoint = getApiEndpoint();
+  
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success('Copied to clipboard');
+  };
+
+  const samplePayload = `{
+  "crew_member": "Commander",
+  "heart_rate": 72,
+  "oxygen_level": 98,
+  "body_temperature": 36.6,
+  "hydration": 91,
+  "stress_level": 34,
+  "timestamp": "${new Date().toISOString()}"
+}`;
+
+  return (
+    <HoloPanel>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-orbitron text-[10px] font-bold text-foreground tracking-wider flex items-center gap-2">
+          <Database className="w-3.5 h-3.5 text-accent" /> IOT API ENDPOINT
+        </h3>
+        <button
+          onClick={onToggle}
+          className="text-[9px] font-mono text-primary hover:text-primary/80 transition-colors"
+        >
+          {showCode ? 'Hide ESP32 Code' : 'Show ESP32 Code'}
+        </button>
+      </div>
+
+      <div className="space-y-3">
+        <div>
+          <label className="text-[9px] font-mono text-muted-foreground block mb-1">POST Endpoint</label>
+          <div
+            onClick={() => copyToClipboard(endpoint)}
+            className="p-2 rounded-lg bg-muted/50 border border-border/30 cursor-pointer hover:bg-muted/70 transition-colors"
+          >
+            <code className="text-[9px] font-mono text-primary break-all">{endpoint}</code>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[9px] font-mono text-muted-foreground block mb-1">Sample Payload</label>
+          <div
+            onClick={() => copyToClipboard(samplePayload)}
+            className="p-2 rounded-lg bg-muted/50 border border-border/30 cursor-pointer hover:bg-muted/70 transition-colors max-h-32 overflow-y-auto"
+          >
+            <pre className="text-[8px] font-mono text-foreground/80">{samplePayload}</pre>
+          </div>
+        </div>
+
+        {showCode && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            <label className="text-[9px] font-mono text-muted-foreground block mb-1">ESP32 Code Snippet</label>
+            <div
+              onClick={() => copyToClipboard(generateEsp32CodeSnippet('device-id', 'Commander'))}
+              className="p-2 rounded-lg bg-muted/50 border border-border/30 cursor-pointer hover:bg-muted/70 transition-colors max-h-48 overflow-y-auto"
+            >
+              <pre className="text-[7px] font-mono text-foreground/70 whitespace-pre-wrap">
+                {generateEsp32CodeSnippet('device-id', 'Commander').slice(0, 800)}...
+              </pre>
+            </div>
+          </motion.div>
+        )}
+
+        <p className="text-[8px] font-mono text-muted-foreground">
+          Click any block to copy • Supports REST, WebSocket-ready via Realtime subscriptions
+        </p>
+      </div>
+    </HoloPanel>
+  );
+};
+
+// ─── Health Alerts Panel ─────────────────────────────────────
+const HealthAlertsPanel = ({ 
+  alerts, 
+  simulatedAlerts,
+  isLiveMode,
+  onAcknowledge 
+}: { 
+  alerts: HealthAlert[]; 
+  simulatedAlerts: { icon: string; text: string; severity: string }[];
+  isLiveMode: boolean;
+  onAcknowledge: (id: string) => void;
+}) => {
+  const displayAlerts = isLiveMode && alerts.length > 0 
+    ? alerts.map(a => ({
+        id: a.id,
+        icon: a.severity === 'critical' ? '🚨' : a.severity === 'warning' ? '⚠' : '✓',
+        text: a.message,
+        severity: a.severity,
+        isReal: true,
+      }))
+    : simulatedAlerts.map((a, i) => ({ ...a, id: `sim-${i}`, isReal: false }));
+
+  return (
+    <HoloPanel variant="nebula">
+      <h3 className="font-orbitron text-[10px] font-bold text-foreground mb-4 tracking-wider flex items-center gap-2">
+        <AlertTriangle className="w-3.5 h-3.5 text-glow-orange" /> AI HEALTH ALERTS
+      </h3>
+      <div className="space-y-2 max-h-[240px] overflow-y-auto">
+        <AnimatePresence mode="popLayout">
+          {displayAlerts.map((a, i) => (
+            <motion.div key={a.id}
+              initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
+              transition={{ delay: i * 0.08 }}
+              layout
+              className={`flex items-start gap-2 rounded-lg p-2.5 border text-[10px] font-mono ${
+                a.severity === "warning" || a.severity === 'critical'
+                  ? "border-glow-orange/20 bg-glow-orange/5 text-glow-orange"
+                  : a.severity === "ok"
+                  ? "border-glow-green/20 bg-glow-green/5 text-glow-green"
+                  : "border-primary/20 bg-primary/5 text-primary"
+              }`}
+            >
+              <span className="text-sm mt-[-1px]">{a.icon}</span>
+              <span className="flex-1">{a.text}</span>
+              {(a as any).isReal && (
+                <button
+                  onClick={() => onAcknowledge(a.id)}
+                  className="text-[8px] px-1.5 py-0.5 rounded bg-background/50 hover:bg-background/80 transition-colors"
+                >
+                  ACK
+                </button>
+              )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+        {displayAlerts.length === 0 && (
+          <div className="text-center py-4 text-[10px] font-mono text-muted-foreground">
+            No active alerts
+          </div>
+        )}
+      </div>
+    </HoloPanel>
   );
 };
 
@@ -190,12 +524,20 @@ const HealthMonitoringPage = () => {
   const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [, setTick] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  
+  // IoT State
+  const [isLiveMode, setIsLiveMode] = useState(false);
+  const [devices, setDevices] = useState<IoTDevice[]>([]);
+  const [healthAlerts, setHealthAlerts] = useState<HealthAlert[]>([]);
+  const [showApiCode, setShowApiCode] = useState(false);
 
-  // Update live data every 3 seconds
+  // Update live data every 3 seconds (simulated mode)
   const updateData = useCallback(() => {
-    setLiveData(crewProfiles.map(generateLiveData));
-    setLastUpdate(Date.now());
-  }, []);
+    if (!isLiveMode) {
+      setLiveData(crewProfiles.map(generateLiveData));
+      setLastUpdate(Date.now());
+    }
+  }, [isLiveMode]);
 
   useEffect(() => {
     intervalRef.current = setInterval(updateData, 3000);
@@ -207,6 +549,97 @@ const HealthMonitoringPage = () => {
     const t = setInterval(() => setTick(n => n + 1), 1000);
     return () => clearInterval(t);
   }, []);
+
+  // Load initial data and set up subscriptions
+  useEffect(() => {
+    const loadInitialData = async () => {
+      const [deviceData, alertData] = await Promise.all([
+        fetchDevices(),
+        fetchHealthAlerts(),
+      ]);
+      setDevices(deviceData);
+      setHealthAlerts(alertData);
+    };
+
+    loadInitialData();
+
+    // Set up realtime subscriptions
+    const unsubscribeHealth = subscribeToHealthData((payload) => {
+      if (isLiveMode) {
+        const newData = payload.new as any;
+        // Update the corresponding crew member's data
+        setLiveData(prev => {
+          const crewIndex = crewProfiles.findIndex(
+            c => c.role.toLowerCase() === newData.crew_member.toLowerCase() ||
+                 c.name.toLowerCase().includes(newData.crew_member.toLowerCase())
+          );
+          if (crewIndex >= 0) {
+            const updated = [...prev];
+            updated[crewIndex] = {
+              ...updated[crewIndex],
+              heartRate: newData.heart_rate || updated[crewIndex].heartRate,
+              o2: newData.oxygen_level || updated[crewIndex].o2,
+              temp: newData.body_temperature || updated[crewIndex].temp,
+              stress: newData.stress_level || updated[crewIndex].stress,
+              hydration: newData.hydration || updated[crewIndex].hydration,
+              sleepQuality: newData.sleep_quality || updated[crewIndex].sleepQuality,
+            };
+            return updated;
+          }
+          return prev;
+        });
+        setLastUpdate(Date.now());
+        toast.info(`New health data received for ${newData.crew_member}`);
+      }
+    });
+
+    const unsubscribeDevices = subscribeToDeviceUpdates((payload) => {
+      const updatedDevice = payload.new as IoTDevice;
+      setDevices(prev => {
+        const index = prev.findIndex(d => d.id === updatedDevice.id);
+        if (index >= 0) {
+          const updated = [...prev];
+          updated[index] = updatedDevice;
+          return updated;
+        }
+        return [...prev, updatedDevice];
+      });
+    });
+
+    const unsubscribeAlerts = subscribeToAlerts((payload) => {
+      const newAlert = payload.new as HealthAlert;
+      setHealthAlerts(prev => [newAlert, ...prev.slice(0, 19)]);
+      
+      if (newAlert.severity === 'critical') {
+        toast.error(newAlert.message, { duration: 10000 });
+      } else if (newAlert.severity === 'warning') {
+        toast.warning(newAlert.message);
+      }
+    });
+
+    return () => {
+      unsubscribeHealth();
+      unsubscribeDevices();
+      unsubscribeAlerts();
+    };
+  }, [isLiveMode]);
+
+  const handleAcknowledgeAlert = async (alertId: string) => {
+    const success = await acknowledgeAlert(alertId);
+    if (success) {
+      setHealthAlerts(prev => prev.filter(a => a.id !== alertId));
+      toast.success('Alert acknowledged');
+    }
+  };
+
+  const handleToggleLiveMode = () => {
+    setIsLiveMode(!isLiveMode);
+    if (!isLiveMode) {
+      toast.info('Switched to Live IoT mode — Waiting for sensor data');
+    } else {
+      toast.info('Switched to Simulated mode');
+    }
+  };
 
   const crew = crewProfiles[selectedCrew];
   const live = liveData[selectedCrew];
@@ -254,16 +687,32 @@ const HealthMonitoringPage = () => {
             <h1 className="text-3xl md:text-5xl font-orbitron font-bold mt-3 text-foreground">
               Crew Health <span className="text-primary text-glow-star">Monitoring</span>
             </h1>
+            <p className="text-[10px] font-mono text-muted-foreground mt-2">
+              IoT-Ready Real-Time Health Telemetry System
+            </p>
           </motion.div>
 
-          {/* Live status bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between mb-6 px-2 gap-2">
-            <LiveIndicator lastUpdate={lastUpdate} />
+          {/* Live status bar + Data Mode Toggle */}
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-6 px-2 gap-4">
+            <LiveIndicator lastUpdate={lastUpdate} isLive={isLiveMode} />
+            <DataModeToggle isLive={isLiveMode} onToggle={handleToggleLiveMode} />
             <div className="flex items-center gap-4 text-[10px] font-mono text-muted-foreground">
               <span className="flex items-center gap-1"><Radio className="w-3 h-3 text-primary" /> Telemetry Active</span>
               <span>Refresh: 3s</span>
               <span>Crew: {crewProfiles.length}</span>
             </div>
+          </div>
+
+          {/* ─── IoT Status Row ──────────────────────────────── */}
+          <div className="grid lg:grid-cols-3 gap-4 mb-6">
+            <DeviceStatusPanel devices={devices} isLiveMode={isLiveMode} />
+            <ApiInfoPanel showCode={showApiCode} onToggle={() => setShowApiCode(!showApiCode)} />
+            <HealthAlertsPanel 
+              alerts={healthAlerts} 
+              simulatedAlerts={aiAlerts}
+              isLiveMode={isLiveMode}
+              onAcknowledge={handleAcknowledgeAlert}
+            />
           </div>
 
           {/* ─── Crew Selector ──────────────────────────────── */}
@@ -460,80 +909,49 @@ const HealthMonitoringPage = () => {
                 ))}
               </div>
 
-              {/* Row 4: Crew Overview + AI Alerts */}
-              <div className="grid lg:grid-cols-3 gap-4">
-                {/* Crew Overview */}
-                <HoloPanel className="lg:col-span-2">
-                  <h3 className="font-orbitron text-[10px] font-bold text-foreground mb-4 tracking-wider flex items-center gap-2">
-                    <Users className="w-3.5 h-3.5 text-accent" /> CREW OVERVIEW
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {crewProfiles.map((c, i) => {
-                      const d = liveData[i];
-                      return (
-                        <motion.div key={c.id}
-                          whileHover={{ scale: 1.04 }}
-                          onClick={() => setSelectedCrew(i)}
-                          className={`rounded-lg p-3 border cursor-pointer transition-all ${
-                            selectedCrew === i
-                              ? "border-primary/40 bg-primary/5"
-                              : "border-border/30 bg-muted/20 hover:border-border/50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-orbitron font-bold shrink-0 ${
-                              selectedCrew === i ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
-                            }`}>{c.avatar}</div>
-                            <span className="text-[10px] font-bold text-foreground truncate">{c.role}</span>
+              {/* Row 4: Crew Overview */}
+              <HoloPanel>
+                <h3 className="font-orbitron text-[10px] font-bold text-foreground mb-4 tracking-wider flex items-center gap-2">
+                  <Users className="w-3.5 h-3.5 text-accent" /> CREW OVERVIEW
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {crewProfiles.map((c, i) => {
+                    const d = liveData[i];
+                    return (
+                      <motion.div key={c.id}
+                        whileHover={{ scale: 1.04 }}
+                        onClick={() => setSelectedCrew(i)}
+                        className={`rounded-lg p-3 border cursor-pointer transition-all ${
+                          selectedCrew === i
+                            ? "border-primary/40 bg-primary/5"
+                            : "border-border/30 bg-muted/20 hover:border-border/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-orbitron font-bold shrink-0 ${
+                            selectedCrew === i ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                          }`}>{c.avatar}</div>
+                          <span className="text-[10px] font-bold text-foreground truncate">{c.role}</span>
+                        </div>
+                        <div className="space-y-1 text-[9px] font-mono">
+                          <div className="flex justify-between text-muted-foreground">
+                            <span>Heart Rate</span>
+                            <motion.span key={d.heartRate} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="text-foreground">{d.heartRate} bpm</motion.span>
                           </div>
-                          <div className="space-y-1 text-[9px] font-mono">
-                            <div className="flex justify-between text-muted-foreground">
-                              <span>Heart Rate</span>
-                              <motion.span key={d.heartRate} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="text-foreground">{d.heartRate} bpm</motion.span>
-                            </div>
-                            <div className="flex justify-between text-muted-foreground">
-                              <span>Stress</span>
-                              <motion.span key={d.stress} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className={d.stress > 25 ? "text-glow-orange" : "text-glow-green"}>{d.stress}%</motion.span>
-                            </div>
-                            <div className="flex justify-between text-muted-foreground">
-                              <span>O₂ Sat</span>
-                              <motion.span key={d.o2} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="text-foreground">{d.o2}%</motion.span>
-                            </div>
+                          <div className="flex justify-between text-muted-foreground">
+                            <span>Stress</span>
+                            <motion.span key={d.stress} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className={d.stress > 25 ? "text-glow-orange" : "text-glow-green"}>{d.stress}%</motion.span>
                           </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </HoloPanel>
-
-                {/* AI Alerts */}
-                <HoloPanel variant="nebula">
-                  <h3 className="font-orbitron text-[10px] font-bold text-foreground mb-4 tracking-wider flex items-center gap-2">
-                    <AlertTriangle className="w-3.5 h-3.5 text-glow-orange" /> AI HEALTH ALERTS
-                  </h3>
-                  <div className="space-y-2 max-h-[240px] overflow-y-auto">
-                    <AnimatePresence mode="popLayout">
-                      {aiAlerts.map((a, i) => (
-                        <motion.div key={`${a.text}-${i}`}
-                          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
-                          transition={{ delay: i * 0.08 }}
-                          layout
-                          className={`flex items-start gap-2 rounded-lg p-2.5 border text-[10px] font-mono ${
-                            a.severity === "warning"
-                              ? "border-glow-orange/20 bg-glow-orange/5 text-glow-orange"
-                              : a.severity === "ok"
-                              ? "border-glow-green/20 bg-glow-green/5 text-glow-green"
-                              : "border-primary/20 bg-primary/5 text-primary"
-                          }`}
-                        >
-                          <span className="text-sm mt-[-1px]">{a.icon}</span>
-                          <span>{a.text}</span>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                </HoloPanel>
-              </div>
+                          <div className="flex justify-between text-muted-foreground">
+                            <span>O₂ Sat</span>
+                            <motion.span key={d.o2} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="text-foreground">{d.o2}%</motion.span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </HoloPanel>
             </motion.div>
           </AnimatePresence>
 
