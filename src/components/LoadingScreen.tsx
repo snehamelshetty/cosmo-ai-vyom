@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 // Pre-generate random values outside render
 const createStars = (count: number) =>
@@ -45,38 +45,225 @@ const createSmokeClouds = (count: number) =>
     delay: i * 0.2,
   }));
 
+const createTrailSegments = (count: number) =>
+  Array.from({ length: count }, (_, i) => ({
+    id: i,
+    width: 8 + Math.random() * 12,
+    offsetX: (Math.random() - 0.5) * 20,
+    delay: i * 0.03,
+    opacity: 1 - i / count,
+  }));
+
 const STARS = createStars(60);
 const SHOOTING_STARS = createShootingStars(4);
 const PARTICLES = createParticles(16);
 const SMOKE_CLOUDS = createSmokeClouds(10);
+const TRAIL_SEGMENTS = createTrailSegments(30);
+
+// Web Audio API for synthesized sounds
+const useRocketSound = () => {
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const rumbleNodesRef = useRef<{ osc: OscillatorNode; gain: GainNode; noise: AudioBufferSourceNode | null } | null>(null);
+  const isPlayingRef = useRef(false);
+
+  const createNoiseBuffer = useCallback((ctx: AudioContext) => {
+    const bufferSize = ctx.sampleRate * 2;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+    return buffer;
+  }, []);
+
+  const startRumble = useCallback((intensity: number = 0.3) => {
+    if (isPlayingRef.current) return;
+    
+    try {
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      audioContextRef.current = ctx;
+
+      // Low frequency oscillator for rumble
+      const osc = ctx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(35, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(55, ctx.currentTime + 2);
+
+      // Gain for volume control
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(intensity * 0.15, ctx.currentTime + 0.5);
+
+      // Low pass filter for deep rumble
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(120, ctx.currentTime);
+
+      // Noise for texture
+      const noiseBuffer = createNoiseBuffer(ctx);
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(intensity * 0.08, ctx.currentTime);
+
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = "lowpass";
+      noiseFilter.frequency.setValueAtTime(200, ctx.currentTime);
+
+      // Connect oscillator chain
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      // Connect noise chain
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+
+      osc.start();
+      noise.start();
+
+      rumbleNodesRef.current = { osc, gain, noise };
+      isPlayingRef.current = true;
+    } catch (e) {
+      console.log("Audio not supported:", e);
+    }
+  }, [createNoiseBuffer]);
+
+  const intensifyRumble = useCallback((intensity: number) => {
+    if (!audioContextRef.current || !rumbleNodesRef.current) return;
+    const ctx = audioContextRef.current;
+    const { gain, osc } = rumbleNodesRef.current;
+    
+    gain.gain.linearRampToValueAtTime(Math.min(intensity * 0.2, 0.3), ctx.currentTime + 0.1);
+    osc.frequency.linearRampToValueAtTime(40 + intensity * 30, ctx.currentTime + 0.1);
+  }, []);
+
+  const playLiftoffWhoosh = useCallback(() => {
+    if (!audioContextRef.current) return;
+    const ctx = audioContextRef.current;
+
+    try {
+      // Swoosh using filtered noise with frequency sweep
+      const noiseBuffer = createNoiseBuffer(ctx);
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(300, ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(2000, ctx.currentTime + 0.3);
+      filter.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 1.5);
+      filter.Q.setValueAtTime(2, ctx.currentTime);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.6, ctx.currentTime + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      noise.start();
+      noise.stop(ctx.currentTime + 2);
+
+      // Fade out rumble
+      if (rumbleNodesRef.current) {
+        rumbleNodesRef.current.gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      }
+    } catch (e) {
+      console.log("Whoosh audio error:", e);
+    }
+  }, [createNoiseBuffer]);
+
+  const stopAll = useCallback(() => {
+    if (rumbleNodesRef.current) {
+      try {
+        rumbleNodesRef.current.osc.stop();
+        rumbleNodesRef.current.noise?.stop();
+      } catch (e) {
+        // Already stopped
+      }
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+    }
+    isPlayingRef.current = false;
+    rumbleNodesRef.current = null;
+    audioContextRef.current = null;
+  }, []);
+
+  return { startRumble, intensifyRumble, playLiftoffWhoosh, stopAll };
+};
 
 const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState(0);
   const [showTitle, setShowTitle] = useState(false);
   const [liftoff, setLiftoff] = useState(false);
+  const [showTrail, setShowTrail] = useState(false);
+  const [trailPosition, setTrailPosition] = useState(0);
+
+  const { startRumble, intensifyRumble, playLiftoffWhoosh, stopAll } = useRocketSound();
+  const soundStartedRef = useRef(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
           clearInterval(timer);
-          setTimeout(onComplete, 1200);
+          setTimeout(() => {
+            stopAll();
+            onComplete();
+          }, 1200);
           return 100;
         }
         return p + 1;
       });
     }, 50);
-    return () => clearInterval(timer);
-  }, [onComplete]);
+    return () => {
+      clearInterval(timer);
+      stopAll();
+    };
+  }, [onComplete, stopAll]);
 
   useEffect(() => {
     if (progress > 15) setPhase(1);
     if (progress > 35) setPhase(2);
     if (progress > 55) { setPhase(3); setShowTitle(true); }
     if (progress > 75) setPhase(4);
-    if (progress > 90) { setPhase(5); setLiftoff(true); }
-  }, [progress]);
+    if (progress > 90) { 
+      setPhase(5); 
+      setLiftoff(true);
+      setShowTrail(true);
+      playLiftoffWhoosh();
+    }
+
+    // Start rumble at ignition phase
+    if (progress > 30 && !soundStartedRef.current) {
+      soundStartedRef.current = true;
+      startRumble(0.3);
+    }
+
+    // Intensify as we approach liftoff
+    if (progress > 30 && progress <= 90) {
+      const intensity = (progress - 30) / 60;
+      intensifyRumble(intensity);
+    }
+  }, [progress, startRumble, intensifyRumble, playLiftoffWhoosh]);
+
+  // Animate trail position after liftoff
+  useEffect(() => {
+    if (liftoff) {
+      const interval = setInterval(() => {
+        setTrailPosition((p) => Math.min(p + 15, 500));
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [liftoff]);
 
   const statusText = useMemo(() => [
     "INITIATING PRE-FLIGHT SEQUENCE...",
@@ -154,6 +341,73 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           background: `radial-gradient(ellipse at center bottom, hsl(var(--glow-orange) / ${(0.1 + engineIntensity * 0.3).toFixed(2)}) 0%, transparent 70%)`,
         }}
       />
+
+      {/* Persistent rocket trail after liftoff */}
+      <AnimatePresence>
+        {showTrail && (
+          <motion.div
+            className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+            style={{ bottom: "50%", transform: "translateX(-50%)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {TRAIL_SEGMENTS.map((seg) => (
+              <motion.div
+                key={`trail-${seg.id}`}
+                className="absolute rounded-full"
+                style={{
+                  width: seg.width,
+                  height: seg.width,
+                  left: `calc(50% + ${seg.offsetX}px)`,
+                  transform: "translateX(-50%)",
+                  background: `radial-gradient(circle, hsl(45, 100%, ${70 - seg.id * 1.5}%) 0%, hsl(25, 100%, 50%) 40%, transparent 70%)`,
+                  filter: `blur(${2 + seg.id * 0.5}px)`,
+                }}
+                initial={{ top: 0, opacity: 0, scale: 0.5 }}
+                animate={{
+                  top: trailPosition + seg.id * 20,
+                  opacity: [0, seg.opacity * 0.9, seg.opacity * 0.6],
+                  scale: [0.5, 1.2, 1.5],
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: seg.delay,
+                  ease: "easeOut",
+                }}
+              />
+            ))}
+            {/* Main trail glow */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 w-20 rounded-full pointer-events-none"
+              style={{
+                background: "linear-gradient(to bottom, hsl(45, 100%, 70%) 0%, hsl(35, 100%, 55%) 20%, hsl(25, 100%, 45%) 50%, transparent 100%)",
+                filter: "blur(8px)",
+              }}
+              initial={{ height: 0, top: 0, opacity: 0 }}
+              animate={{ 
+                height: Math.min(trailPosition + 100, 600),
+                top: 0,
+                opacity: [0, 0.8, 0.5],
+              }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+            />
+            {/* Glowing core trail */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 w-8 rounded-full pointer-events-none"
+              style={{
+                background: "linear-gradient(to bottom, hsl(50, 100%, 90%) 0%, hsl(45, 100%, 70%) 30%, hsl(40, 100%, 55%) 60%, transparent 100%)",
+                filter: "blur(3px)",
+              }}
+              initial={{ height: 0, top: 0 }}
+              animate={{ 
+                height: Math.min(trailPosition + 50, 500),
+                top: 0,
+              }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ROCKET */}
       <motion.div
