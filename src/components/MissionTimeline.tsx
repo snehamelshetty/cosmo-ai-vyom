@@ -4,7 +4,7 @@ import { Rocket, Satellite, Globe, Brain, Shield, Target, Flag } from "lucide-re
 import { useRef } from "react";
 
 const phases = [
-  { year: "2024", title: "Concept & AI Training", desc: "Initial development of MAITHRI AI core, training on astronaut health datasets and biometric patterns.", icon: Brain, status: "complete" },
+  { year: "2024", title: "Concept & AI Training", desc: "Initial development of COSMO AI core, training on astronaut health datasets and biometric patterns.", icon: Brain, status: "complete" },
   { year: "2025 Q1", title: "Biometric Integration", desc: "Integration with wearable sensors for real-time heart rate, O₂, temperature, and hydration monitoring.", icon: Shield, status: "complete" },
   { year: "2025 Q2", title: "Cognitive & Psych Modules", desc: "Cognitive fitness trainer, fatigue prediction engine, and psychological support chatbot deployment.", icon: Target, status: "active" },
   { year: "2026", title: "Deep Space Simulation", desc: "Full-system testing in simulated Mars transit environments with 24-min communication delay.", icon: Satellite, status: "upcoming" },
