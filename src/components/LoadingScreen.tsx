@@ -253,6 +253,8 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
       setLiftoff(true);
       setShowTrail(true);
       playLiftoffWhoosh();
+      // Trigger sparkle disperse after rocket leaves
+      setTimeout(() => setShowSparkleDisperse(true), 1200);
     }
 
     // Start rumble at ignition phase
