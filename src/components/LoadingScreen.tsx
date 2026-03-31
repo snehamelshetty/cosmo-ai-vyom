@@ -218,6 +218,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [liftoff, setLiftoff] = useState(false);
   const [showTrail, setShowTrail] = useState(false);
   const [trailPosition, setTrailPosition] = useState(0);
+  const [showSparkleDisperse, setShowSparkleDisperse] = useState(false);
 
   const { startRumble, intensifyRumble, playLiftoffWhoosh, stopAll } = useRocketSound();
   const soundStartedRef = useRef(false);
