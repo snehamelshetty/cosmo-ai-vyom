@@ -27,7 +27,7 @@ const AboutPage = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
             <span className="text-primary/60 font-mono text-[10px] tracking-[0.5em] uppercase">Mission Brief</span>
             <h1 className="text-4xl md:text-6xl font-orbitron font-bold mt-4 text-foreground">
-              About <span className="text-primary text-glow-star">MAITHRI</span>
+              About <span className="text-primary text-glow-star">COSMO</span>
             </h1>
             <p className="text-muted-foreground mt-6 max-w-2xl mx-auto text-base font-light leading-relaxed">
               MAITHRI — <em>AI Companion for Astronaut Mental and Physical Wellbeing</em> — is a comprehensive artificial intelligence system designed to support astronaut health during deep space missions where real-time communication with Earth is impossible.
