@@ -613,7 +613,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
               transition={{ duration: 1.5, ease: "easeOut" }}
               className="font-orbitron text-4xl md:text-6xl font-bold text-foreground mb-3"
             >
-              MAITHRI
+              COSMO
             </motion.h1>
             <motion.div
               initial={{ width: 0 }}
