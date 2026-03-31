@@ -54,11 +54,23 @@ const createTrailSegments = (count: number) =>
     opacity: 1 - i / count,
   }));
 
+const createSparkles = (count: number) =>
+  Array.from({ length: count }, (_, i) => ({
+    id: i,
+    size: 2 + Math.random() * 5,
+    angle: Math.random() * 360,
+    distance: 40 + Math.random() * 120,
+    duration: 1 + Math.random() * 1.5,
+    delay: Math.random() * 0.8,
+    hue: 30 + Math.random() * 40,
+  }));
+
 const STARS = createStars(60);
 const SHOOTING_STARS = createShootingStars(4);
 const PARTICLES = createParticles(16);
 const SMOKE_CLOUDS = createSmokeClouds(10);
 const TRAIL_SEGMENTS = createTrailSegments(30);
+const SPARKLES = createSparkles(40);
 
 // Web Audio API for synthesized sounds
 const useRocketSound = () => {
