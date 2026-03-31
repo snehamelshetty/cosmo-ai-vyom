@@ -271,7 +271,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     "CALIBRATING NAVIGATION ARRAY...",
     "ACTIVATING LIFE SUPPORT MODULES...",
     "T-MINUS 10... ENGINES IGNITING...",
-    "LIFTOFF — MISSION MAITHRI LAUNCHED",
+    "LIFTOFF — MISSION COSMO LAUNCHED",
   ], []);
 
   const rocketY = liftoff ? -400 : 0;
