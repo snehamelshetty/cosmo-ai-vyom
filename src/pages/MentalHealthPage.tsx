@@ -160,7 +160,7 @@ const MentalHealthPage = () => {
             <div className="flex items-start gap-4">
               <MessageSquare className="w-6 h-6 text-accent/50 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-orbitron text-xs font-bold text-foreground mb-2 tracking-wider">MAITHRI AI INSIGHT</h3>
+                <h3 className="font-orbitron text-xs font-bold text-foreground mb-2 tracking-wider">COSMO AI INSIGHT</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   "Your cognitive performance has improved by 4% this week, with notable gains in focus and memory retention.
                   However, your isolation index has increased slightly. I recommend scheduling a video call with family or engaging

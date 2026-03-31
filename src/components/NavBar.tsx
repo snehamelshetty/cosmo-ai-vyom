@@ -52,7 +52,7 @@ const NavBar = () => {
     >
       <div className="container mx-auto max-w-7xl px-4 h-14 flex items-center justify-between">
         <Link to="/" className="font-orbitron font-bold text-sm text-primary/80 text-glow-star tracking-[0.3em] hover:text-primary transition-colors">
-          MAITHRI
+          COSMO
         </Link>
 
         {/* Desktop nav */}

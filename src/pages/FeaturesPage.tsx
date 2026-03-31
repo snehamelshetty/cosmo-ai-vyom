@@ -30,7 +30,7 @@ const FeaturesPage = () => {
             className="text-center mb-20">
             <span className="text-primary/60 font-mono text-[10px] tracking-[0.5em] uppercase">Mission Control Hub</span>
             <h1 className="text-4xl md:text-6xl font-orbitron font-bold mt-4 text-foreground">
-              MAITHRI <span className="text-primary text-glow-star">Features</span>
+              COSMO <span className="text-primary text-glow-star">Features</span>
             </h1>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-base font-light">
               Six AI-powered modules designed for every aspect of astronaut wellbeing during long-duration deep space missions.

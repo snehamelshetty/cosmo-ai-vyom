@@ -84,7 +84,7 @@ const AboutPage = () => {
 
           {/* CTA */}
           <div className="text-center">
-            <p className="text-muted-foreground mb-6 text-sm">Explore our AI systems and see how MAITHRI protects astronaut wellbeing.</p>
+            <p className="text-muted-foreground mb-6 text-sm">Explore our AI systems and see how COSMO protects astronaut wellbeing.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/features"
                 className="px-8 py-3 rounded-lg border border-glow text-primary font-orbitron font-medium text-xs tracking-[0.2em] hover:bg-primary/5 transition-all duration-500 glow-star">

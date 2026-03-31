@@ -48,7 +48,7 @@ const MissionTimeline = () => {
             Mission <span className="text-primary text-glow-star">Timeline</span>
           </h2>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-sm">
-            From concept to Mars — tracking MAITHRI's journey to becoming humanity's AI companion in deep space.
+            From concept to Mars — tracking COSMO's journey to becoming humanity's AI companion in deep space.
           </p>
         </motion.div>
 

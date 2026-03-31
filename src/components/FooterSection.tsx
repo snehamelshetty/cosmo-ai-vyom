@@ -15,7 +15,7 @@ const FooterSection = () => {
             <span>Ground Control: Connected</span>
           </div>
           <p className="text-[10px] text-muted-foreground/30 mt-10 font-mono tracking-wider">
-            © {new Date().getFullYear()} MAITHRI · All systems nominal
+            © {new Date().getFullYear()} COSMO · All systems nominal
           </p>
         </motion.div>
       </div>
