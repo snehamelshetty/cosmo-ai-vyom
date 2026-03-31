@@ -10,7 +10,7 @@ const phases = [
   { year: "2026", title: "Deep Space Simulation", desc: "Full-system testing in simulated Mars transit environments with 24-min communication delay.", icon: Satellite, status: "upcoming" },
   { year: "2027", title: "Artemis Lunar Deployment", desc: "First operational deployment aboard Artemis missions to the lunar surface.", icon: Rocket, status: "upcoming" },
   { year: "2028", title: "Gateway Station Integration", desc: "Permanent installation on the Lunar Gateway station for continuous crew support.", icon: Globe, status: "upcoming" },
-  { year: "2030+", title: "Mars Mission Support", desc: "Full autonomy mode for 2+ year Mars missions — MAITHRI as sole medical AI companion.", icon: Flag, status: "upcoming" },
+  { year: "2030+", title: "Mars Mission Support", desc: "Full autonomy mode for 2+ year Mars missions — COSMO as sole medical AI companion.", icon: Flag, status: "upcoming" },
 ];
 
 const statusColors: Record<string, string> = {
