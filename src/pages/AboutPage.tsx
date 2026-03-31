@@ -12,7 +12,7 @@ const team = [
 ];
 
 const milestones = [
-  { year: "2024", event: "MAITHRI concept development and initial AI training on astronaut health data" },
+  { year: "2024", event: "COSMO concept development and initial AI training on astronaut health data" },
   { year: "2025", event: "Integration with biometric sensors and cognitive fitness training modules" },
   { year: "2026", event: "Full-system testing with simulated deep space mission environments" },
   { year: "2027", event: "Planned deployment on Artemis lunar missions" },
