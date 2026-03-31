@@ -106,7 +106,7 @@ const MissionVehiclesPage = () => {
               Mission <span className="text-primary text-glow-star">Vehicles</span>
             </h1>
             <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
-              The spacecraft that will carry humanity to the stars — each integrated with MAITHRI's wellbeing monitoring systems.
+              The spacecraft that will carry humanity to the stars — each integrated with COSMO's wellbeing monitoring systems.
             </p>
           </motion.div>
 
