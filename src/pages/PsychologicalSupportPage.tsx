@@ -45,7 +45,7 @@ const generateResponse = (input: string): string => {
 
 const PsychologicalSupportPage = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hello, I'm MAITHRI — your AI psychological companion. I'm here to support your mental wellbeing during this mission. How are you feeling today? You can share anything — this is a safe, private space." },
+    { role: "assistant", content: "Hello, I'm COSMO — your AI psychological companion. I'm here to support your mental wellbeing during this mission. How are you feeling today? You can share anything — this is a safe, private space." },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
