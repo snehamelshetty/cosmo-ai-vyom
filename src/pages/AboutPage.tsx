@@ -30,7 +30,7 @@ const AboutPage = () => {
               About <span className="text-primary text-glow-star">COSMO</span>
             </h1>
             <p className="text-muted-foreground mt-6 max-w-2xl mx-auto text-base font-light leading-relaxed">
-              MAITHRI — <em>AI Companion for Astronaut Mental and Physical Wellbeing</em> — is a comprehensive artificial intelligence system designed to support astronaut health during deep space missions where real-time communication with Earth is impossible.
+              COSMO — <em>AI Companion for Astronaut Mental and Physical Wellbeing</em> — is a comprehensive artificial intelligence system designed to support astronaut health during deep space missions where real-time communication with Earth is impossible.
             </p>
           </motion.div>
 
