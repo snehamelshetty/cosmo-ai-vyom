@@ -44,7 +44,7 @@ const AboutPage = () => {
                   As humanity prepares for deep space exploration — missions to the Moon, Mars, and beyond — the greatest challenge isn't technology. It's the human element. Astronauts face extreme isolation, confined spaces, communication delays of up to 24 minutes, muscle atrophy, bone loss, sleep disruption, and profound psychological challenges.
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-                  MAITHRI is built to be the always-present AI companion — monitoring vitals, predicting fatigue before it happens, providing psychological support during moments of crisis, training cognitive fitness, and recreating the sounds and feelings of Earth to combat homesickness.
+                  COSMO is built to be the always-present AI companion — monitoring vitals, predicting fatigue before it happens, providing psychological support during moments of crisis, training cognitive fitness, and recreating the sounds and feelings of Earth to combat homesickness.
                 </p>
               </div>
             </div>
