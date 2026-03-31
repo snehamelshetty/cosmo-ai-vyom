@@ -4,13 +4,13 @@ import { Rocket, Satellite, Globe, Brain, Shield, Target, Flag } from "lucide-re
 import { useRef } from "react";
 
 const phases = [
-  { year: "2024", title: "Concept & AI Training", desc: "Initial development of MAITHRI AI core, training on astronaut health datasets and biometric patterns.", icon: Brain, status: "complete" },
+  { year: "2024", title: "Concept & AI Training", desc: "Initial development of COSMO AI core, training on astronaut health datasets and biometric patterns.", icon: Brain, status: "complete" },
   { year: "2025 Q1", title: "Biometric Integration", desc: "Integration with wearable sensors for real-time heart rate, O₂, temperature, and hydration monitoring.", icon: Shield, status: "complete" },
   { year: "2025 Q2", title: "Cognitive & Psych Modules", desc: "Cognitive fitness trainer, fatigue prediction engine, and psychological support chatbot deployment.", icon: Target, status: "active" },
   { year: "2026", title: "Deep Space Simulation", desc: "Full-system testing in simulated Mars transit environments with 24-min communication delay.", icon: Satellite, status: "upcoming" },
   { year: "2027", title: "Artemis Lunar Deployment", desc: "First operational deployment aboard Artemis missions to the lunar surface.", icon: Rocket, status: "upcoming" },
   { year: "2028", title: "Gateway Station Integration", desc: "Permanent installation on the Lunar Gateway station for continuous crew support.", icon: Globe, status: "upcoming" },
-  { year: "2030+", title: "Mars Mission Support", desc: "Full autonomy mode for 2+ year Mars missions — MAITHRI as sole medical AI companion.", icon: Flag, status: "upcoming" },
+  { year: "2030+", title: "Mars Mission Support", desc: "Full autonomy mode for 2+ year Mars missions — COSMO as sole medical AI companion.", icon: Flag, status: "upcoming" },
 ];
 
 const statusColors: Record<string, string> = {
@@ -48,7 +48,7 @@ const MissionTimeline = () => {
             Mission <span className="text-primary text-glow-star">Timeline</span>
           </h2>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-sm">
-            From concept to Mars — tracking MAITHRI's journey to becoming humanity's AI companion in deep space.
+            From concept to Mars — tracking COSMO's journey to becoming humanity's AI companion in deep space.
           </p>
         </motion.div>
 

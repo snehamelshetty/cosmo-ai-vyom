@@ -12,7 +12,7 @@ const team = [
 ];
 
 const milestones = [
-  { year: "2024", event: "MAITHRI concept development and initial AI training on astronaut health data" },
+  { year: "2024", event: "COSMO concept development and initial AI training on astronaut health data" },
   { year: "2025", event: "Integration with biometric sensors and cognitive fitness training modules" },
   { year: "2026", event: "Full-system testing with simulated deep space mission environments" },
   { year: "2027", event: "Planned deployment on Artemis lunar missions" },
@@ -27,10 +27,10 @@ const AboutPage = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
             <span className="text-primary/60 font-mono text-[10px] tracking-[0.5em] uppercase">Mission Brief</span>
             <h1 className="text-4xl md:text-6xl font-orbitron font-bold mt-4 text-foreground">
-              About <span className="text-primary text-glow-star">MAITHRI</span>
+              About <span className="text-primary text-glow-star">COSMO</span>
             </h1>
             <p className="text-muted-foreground mt-6 max-w-2xl mx-auto text-base font-light leading-relaxed">
-              MAITHRI — <em>AI Companion for Astronaut Mental and Physical Wellbeing</em> — is a comprehensive artificial intelligence system designed to support astronaut health during deep space missions where real-time communication with Earth is impossible.
+              COSMO — <em>AI Companion for Astronaut Mental and Physical Wellbeing</em> — is a comprehensive artificial intelligence system designed to support astronaut health during deep space missions where real-time communication with Earth is impossible.
             </p>
           </motion.div>
 
@@ -44,7 +44,7 @@ const AboutPage = () => {
                   As humanity prepares for deep space exploration — missions to the Moon, Mars, and beyond — the greatest challenge isn't technology. It's the human element. Astronauts face extreme isolation, confined spaces, communication delays of up to 24 minutes, muscle atrophy, bone loss, sleep disruption, and profound psychological challenges.
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-                  MAITHRI is built to be the always-present AI companion — monitoring vitals, predicting fatigue before it happens, providing psychological support during moments of crisis, training cognitive fitness, and recreating the sounds and feelings of Earth to combat homesickness.
+                  COSMO is built to be the always-present AI companion — monitoring vitals, predicting fatigue before it happens, providing psychological support during moments of crisis, training cognitive fitness, and recreating the sounds and feelings of Earth to combat homesickness.
                 </p>
               </div>
             </div>
@@ -84,7 +84,7 @@ const AboutPage = () => {
 
           {/* CTA */}
           <div className="text-center">
-            <p className="text-muted-foreground mb-6 text-sm">Explore our AI systems and see how MAITHRI protects astronaut wellbeing.</p>
+            <p className="text-muted-foreground mb-6 text-sm">Explore our AI systems and see how COSMO protects astronaut wellbeing.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/features"
                 className="px-8 py-3 rounded-lg border border-glow text-primary font-orbitron font-medium text-xs tracking-[0.2em] hover:bg-primary/5 transition-all duration-500 glow-star">

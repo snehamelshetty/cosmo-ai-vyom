@@ -5,7 +5,7 @@ const FooterSection = () => {
     <footer className="relative py-20 px-6 border-t border-border/10">
       <div className="container mx-auto max-w-7xl text-center">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <h2 className="font-orbitron text-2xl font-bold text-primary/60 text-glow-star mb-4 tracking-[0.3em]">MAITHRI</h2>
+          <h2 className="font-orbitron text-2xl font-bold text-primary/60 text-glow-star mb-4 tracking-[0.3em]">COSMO</h2>
           <p className="text-muted-foreground/60 max-w-md mx-auto mb-10 text-sm font-light">
             AI-Powered Wellbeing System — Supporting astronaut mental health, physical condition, and cognitive performance across the cosmos.
           </p>
@@ -15,7 +15,7 @@ const FooterSection = () => {
             <span>Ground Control: Connected</span>
           </div>
           <p className="text-[10px] text-muted-foreground/30 mt-10 font-mono tracking-wider">
-            © {new Date().getFullYear()} MAITHRI · All systems nominal
+            © {new Date().getFullYear()} COSMO · All systems nominal
           </p>
         </motion.div>
       </div>

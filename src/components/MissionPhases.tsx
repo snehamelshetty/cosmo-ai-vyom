@@ -34,7 +34,7 @@ const MissionPhases = () => {
         <div className="grid lg:grid-cols-2 gap-8">
           <HoloPanel>
             <h3 className="font-orbitron text-sm font-bold text-foreground mb-6 tracking-wider">BEFORE SPACE MISSION</h3>
-            <p className="text-muted-foreground text-sm mb-6">Training phase — MAITHRI helps prepare astronauts for the demands of space.</p>
+            <p className="text-muted-foreground text-sm mb-6">Training phase — COSMO helps prepare astronauts for the demands of space.</p>
             <ul className="space-y-3">
               {beforeItems.map((item, i) => (
                 <motion.li key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
@@ -49,7 +49,7 @@ const MissionPhases = () => {
 
           <HoloPanel variant="nebula">
             <h3 className="font-orbitron text-sm font-bold text-foreground mb-6 tracking-wider">DURING SPACE MISSION</h3>
-            <p className="text-muted-foreground text-sm mb-6">MAITHRI provides continuous AI support throughout these conditions.</p>
+            <p className="text-muted-foreground text-sm mb-6">COSMO provides continuous AI support throughout these conditions.</p>
             <div className="space-y-4">
               {duringChallenges.map((c, i) => (
                 <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}

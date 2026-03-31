@@ -21,7 +21,7 @@ const features = [
   { icon: BarChart3, title: "Before & After Space", path: "/before-after-space", variant: "star" as const,
     desc: "How space changes the human body — physiological and psychological transformations." },
   { icon: Rocket, title: "Mission Vehicles", path: "/mission-vehicles", variant: "nebula" as const,
-    desc: "Spacecraft fleet specs and MAITHRI integration — Falcon 9, SLS, Starship, and more." },
+    desc: "Spacecraft fleet specs and COSMO integration — Falcon 9, SLS, Starship, and more." },
   { icon: Satellite, title: "Mission Companion AI", path: "/", variant: "star" as const,
     desc: "Maintains routine with reminders for exercise, hydration, sleep, and communication." },
   { icon: AlertTriangle, title: "Emergency Stabilizer", path: "/", variant: "nebula" as const,

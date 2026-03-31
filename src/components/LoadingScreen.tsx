@@ -54,11 +54,23 @@ const createTrailSegments = (count: number) =>
     opacity: 1 - i / count,
   }));
 
+const createSparkles = (count: number) =>
+  Array.from({ length: count }, (_, i) => ({
+    id: i,
+    size: 2 + Math.random() * 5,
+    angle: Math.random() * 360,
+    distance: 40 + Math.random() * 120,
+    duration: 1 + Math.random() * 1.5,
+    delay: Math.random() * 0.8,
+    hue: 30 + Math.random() * 40,
+  }));
+
 const STARS = createStars(60);
 const SHOOTING_STARS = createShootingStars(4);
 const PARTICLES = createParticles(16);
 const SMOKE_CLOUDS = createSmokeClouds(10);
 const TRAIL_SEGMENTS = createTrailSegments(30);
+const SPARKLES = createSparkles(40);
 
 // Web Audio API for synthesized sounds
 const useRocketSound = () => {
@@ -206,6 +218,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [liftoff, setLiftoff] = useState(false);
   const [showTrail, setShowTrail] = useState(false);
   const [trailPosition, setTrailPosition] = useState(0);
+  const [showSparkleDisperse, setShowSparkleDisperse] = useState(false);
 
   const { startRumble, intensifyRumble, playLiftoffWhoosh, stopAll } = useRocketSound();
   const soundStartedRef = useRef(false);
@@ -240,6 +253,8 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
       setLiftoff(true);
       setShowTrail(true);
       playLiftoffWhoosh();
+      // Trigger sparkle disperse after rocket leaves
+      setTimeout(() => setShowSparkleDisperse(true), 1200);
     }
 
     // Start rumble at ignition phase
@@ -271,7 +286,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     "CALIBRATING NAVIGATION ARRAY...",
     "ACTIVATING LIFE SUPPORT MODULES...",
     "T-MINUS 10... ENGINES IGNITING...",
-    "LIFTOFF — MISSION MAITHRI LAUNCHED",
+    "LIFTOFF — MISSION COSMO LAUNCHED",
   ], []);
 
   const rocketY = liftoff ? -400 : 0;
@@ -349,7 +364,8 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
             className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
             style={{ bottom: "50%", transform: "translateX(-50%)" }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: showSparkleDisperse ? 0 : 1 }}
+            transition={{ duration: showSparkleDisperse ? 2 : 0.3 }}
           >
             {TRAIL_SEGMENTS.map((seg) => (
               <motion.div
@@ -364,13 +380,18 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
                   filter: `blur(${2 + seg.id * 0.5}px)`,
                 }}
                 initial={{ top: 0, opacity: 0, scale: 0.5 }}
-                animate={{
+                animate={showSparkleDisperse ? {
+                  top: trailPosition + seg.id * 20,
+                  opacity: 0,
+                  scale: 0,
+                  x: (Math.random() - 0.5) * 200,
+                } : {
                   top: trailPosition + seg.id * 20,
                   opacity: [0, seg.opacity * 0.9, seg.opacity * 0.6],
                   scale: [0.5, 1.2, 1.5],
                 }}
                 transition={{
-                  duration: 0.5,
+                  duration: showSparkleDisperse ? 1.5 : 0.5,
                   delay: seg.delay,
                   ease: "easeOut",
                 }}
@@ -384,12 +405,12 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
                 filter: "blur(8px)",
               }}
               initial={{ height: 0, top: 0, opacity: 0 }}
-              animate={{ 
+              animate={showSparkleDisperse ? { opacity: 0, scale: 0.5 } : { 
                 height: Math.min(trailPosition + 100, 600),
                 top: 0,
                 opacity: [0, 0.8, 0.5],
               }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              transition={{ duration: showSparkleDisperse ? 1.5 : 1.5, ease: "easeOut" }}
             />
             {/* Glowing core trail */}
             <motion.div
@@ -399,10 +420,67 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
                 filter: "blur(3px)",
               }}
               initial={{ height: 0, top: 0 }}
-              animate={{ 
+              animate={showSparkleDisperse ? { opacity: 0, scale: 0.3 } : { 
                 height: Math.min(trailPosition + 50, 500),
                 top: 0,
               }}
+              transition={{ duration: showSparkleDisperse ? 1 : 1.2, ease: "easeOut" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sparkle disperse effect */}
+      <AnimatePresence>
+        {showSparkleDisperse && (
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 2.5, delay: 0.5 }}
+          >
+            {SPARKLES.map((s) => {
+              const rad = (s.angle * Math.PI) / 180;
+              const endX = Math.cos(rad) * s.distance;
+              const endY = Math.sin(rad) * s.distance;
+              return (
+                <motion.div
+                  key={`sparkle-${s.id}`}
+                  className="absolute rounded-full"
+                  style={{
+                    width: s.size,
+                    height: s.size,
+                    background: `radial-gradient(circle, hsl(${s.hue}, 100%, 85%) 0%, hsl(${s.hue}, 100%, 60%) 50%, transparent 100%)`,
+                    boxShadow: `0 0 ${s.size * 2}px hsl(${s.hue}, 100%, 70%)`,
+                  }}
+                  initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                  animate={{
+                    x: endX,
+                    y: endY,
+                    opacity: [1, 0.8, 0],
+                    scale: [1, 1.5, 0],
+                  }}
+                  transition={{
+                    duration: s.duration,
+                    delay: s.delay,
+                    ease: "easeOut",
+                  }}
+                />
+              );
+            })}
+            {/* Central flash */}
+            <motion.div
+              className="absolute rounded-full"
+              style={{
+                width: 60,
+                height: 60,
+                left: -30,
+                top: -30,
+                background: "radial-gradient(circle, hsl(45, 100%, 90%) 0%, hsl(35, 100%, 60%) 30%, transparent 70%)",
+                filter: "blur(10px)",
+              }}
+              initial={{ scale: 0, opacity: 1 }}
+              animate={{ scale: [0, 3, 0], opacity: [1, 0.6, 0] }}
               transition={{ duration: 1.2, ease: "easeOut" }}
             />
           </motion.div>
@@ -613,7 +691,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
               transition={{ duration: 1.5, ease: "easeOut" }}
               className="font-orbitron text-4xl md:text-6xl font-bold text-foreground mb-3"
             >
-              MAITHRI
+              COSMO
             </motion.h1>
             <motion.div
               initial={{ width: 0 }}

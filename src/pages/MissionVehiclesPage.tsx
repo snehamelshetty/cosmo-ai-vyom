@@ -106,7 +106,7 @@ const MissionVehiclesPage = () => {
               Mission <span className="text-primary text-glow-star">Vehicles</span>
             </h1>
             <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
-              The spacecraft that will carry humanity to the stars — each integrated with MAITHRI's wellbeing monitoring systems.
+              The spacecraft that will carry humanity to the stars — each integrated with COSMO's wellbeing monitoring systems.
             </p>
           </motion.div>
 
@@ -176,14 +176,14 @@ const MissionVehiclesPage = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* MAITHRI integration */}
+          {/* COSMO integration */}
           <HoloPanel variant="nebula" className="mt-8">
             <div className="flex items-start gap-4">
               <Rocket className="w-8 h-8 text-accent/50 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-orbitron text-sm font-bold text-foreground mb-2 tracking-wider">MAITHRI INTEGRATION</h3>
+                <h3 className="font-orbitron text-sm font-bold text-foreground mb-2 tracking-wider">COSMO INTEGRATION</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Every mission vehicle in our fleet is equipped with MAITHRI's comprehensive wellbeing monitoring suite.
+                  Every mission vehicle in our fleet is equipped with COSMO's comprehensive wellbeing monitoring suite.
                   Real-time biometric tracking, AI psychological support, fatigue prediction, and environmental controls
                   are seamlessly integrated into the spacecraft's life support systems, ensuring crew health from launch to landing.
                 </p>

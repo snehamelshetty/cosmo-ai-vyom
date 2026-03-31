@@ -83,7 +83,7 @@ const SpaceDataDashboard = () => {
             Real-Time <span className="text-accent text-glow-nebula">Space Data</span>
           </h2>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-sm">
-            Live data from NASA and ESA — powering MAITHRI's situational awareness systems.
+            Live data from NASA and ESA — powering COSMO's situational awareness systems.
           </p>
         </motion.div>
 

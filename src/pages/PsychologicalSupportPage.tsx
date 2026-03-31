@@ -45,7 +45,7 @@ const generateResponse = (input: string): string => {
 
 const PsychologicalSupportPage = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hello, I'm MAITHRI — your AI psychological companion. I'm here to support your mental wellbeing during this mission. How are you feeling today? You can share anything — this is a safe, private space." },
+    { role: "assistant", content: "Hello, I'm COSMO — your AI psychological companion. I'm here to support your mental wellbeing during this mission. How are you feeling today? You can share anything — this is a safe, private space." },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -93,7 +93,7 @@ const PsychologicalSupportPage = () => {
                     <MessageCircle className="w-4 h-4 text-accent" />
                   </div>
                   <div>
-                    <p className="font-orbitron text-xs text-foreground">MAITHRI Chat</p>
+                    <p className="font-orbitron text-xs text-foreground">COSMO Chat</p>
                     <div className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-glow-green animate-pulse" />
                       <span className="text-[10px] font-mono text-muted-foreground">Online</span>
