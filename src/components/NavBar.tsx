@@ -26,16 +26,9 @@ const featureLinks = [
 
 const NavBar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [featuresOpen, setFeaturesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth");
-  };
 
   const isFeaturePage = featureLinks.some(f => f.path === location.pathname) || location.pathname === "/features";
 
