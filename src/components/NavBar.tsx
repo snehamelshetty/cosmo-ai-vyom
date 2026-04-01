@@ -126,10 +126,6 @@ const NavBar = () => {
             <span className="text-[10px] font-mono text-muted-foreground/60 tracking-wider">ONLINE</span>
           </span>
 
-          <button onClick={handleSignOut} className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[9px] font-mono tracking-wider text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
-            <LogOut className="w-3 h-3" />
-            SIGN OUT
-          </button>
 
           <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden text-muted-foreground hover:text-foreground transition-colors">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
