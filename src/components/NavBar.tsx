@@ -1,8 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, LogOut } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 
 const mainLinks = [
   { label: "Home", path: "/" },
@@ -27,16 +26,9 @@ const featureLinks = [
 
 const NavBar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [featuresOpen, setFeaturesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth");
-  };
 
   const isFeaturePage = featureLinks.some(f => f.path === location.pathname) || location.pathname === "/features";
 
@@ -134,10 +126,6 @@ const NavBar = () => {
             <span className="text-[10px] font-mono text-muted-foreground/60 tracking-wider">ONLINE</span>
           </span>
 
-          <button onClick={handleSignOut} className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[9px] font-mono tracking-wider text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
-            <LogOut className="w-3 h-3" />
-            SIGN OUT
-          </button>
 
           <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden text-muted-foreground hover:text-foreground transition-colors">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -185,10 +173,6 @@ const NavBar = () => {
                 </Link>
               ))}
 
-              <button onClick={() => { setMobileOpen(false); handleSignOut(); }}
-                className="w-full text-left py-2.5 px-4 rounded-lg text-xs font-mono tracking-wider text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all flex items-center gap-2">
-                <LogOut className="w-3 h-3" /> SIGN OUT
-              </button>
             </div>
           </motion.div>
         )}
