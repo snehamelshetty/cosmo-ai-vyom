@@ -173,10 +173,6 @@ const NavBar = () => {
                 </Link>
               ))}
 
-              <button onClick={() => { setMobileOpen(false); handleSignOut(); }}
-                className="w-full text-left py-2.5 px-4 rounded-lg text-xs font-mono tracking-wider text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all flex items-center gap-2">
-                <LogOut className="w-3 h-3" /> SIGN OUT
-              </button>
             </div>
           </motion.div>
         )}
