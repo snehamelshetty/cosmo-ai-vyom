@@ -496,81 +496,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           ease: liftoff ? [0.4, 0, 0.2, 1] : "easeOut",
         }}
       >
-        {/* Exhaust particles */}
-        {showParticles && (
-          <div className="absolute top-full left-1/2 -translate-x-1/2">
-            {PARTICLES.map((p) => (
-              <motion.div
-                key={`p-${p.id}`}
-                className="absolute rounded-full"
-                style={{
-                  width: p.w,
-                  height: p.h,
-                  background: `hsl(${p.hue}, 100%, ${p.lightness}%)`,
-                  left: `${p.offsetX}px`,
-                  filter: "blur(1px)",
-                }}
-                animate={{
-                  y: [0, p.travelY],
-                  x: [0, p.driftX],
-                  opacity: [1, 0],
-                  scale: [1, 0.2],
-                }}
-                transition={{
-                  duration: p.duration,
-                  repeat: Infinity,
-                  delay: p.delay,
-                  ease: "easeOut",
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Main exhaust flame */}
-        {showFlame && (
-          <motion.div
-            className="absolute top-full left-1/2 -translate-x-1/2 origin-top"
-            initial={{ scaleY: 0, opacity: 0 }}
-            animate={{ scaleY: 0.5 + engineIntensity * 1.5, opacity: engineIntensity }}
-          >
-            <motion.div
-              className="w-16 h-40 relative"
-              animate={{ scaleY: [1, 1.1, 0.95, 1.05, 1] }}
-              transition={{ duration: 0.15, repeat: Infinity }}
-            >
-              {/* Outer flame */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, hsl(45,100%,70%) 0%, hsl(35,100%,55%) 20%, hsl(20,100%,50%) 50%, hsl(10,100%,40%) 70%, transparent 100%)",
-                  clipPath: "polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%)",
-                  filter: "blur(2px)",
-                }}
-              />
-              {/* Inner flame */}
-              <div
-                className="absolute inset-x-4 inset-y-0"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, hsl(50,100%,95%) 0%, hsl(45,100%,75%) 30%, hsl(40,100%,60%) 60%, transparent 100%)",
-                  clipPath: "polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)",
-                  filter: "blur(1px)",
-                }}
-              />
-            </motion.div>
-            {/* Flame glow */}
-            <div
-              className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-48 rounded-full blur-xl pointer-events-none"
-              style={{
-                background: `radial-gradient(ellipse, hsl(35,100%,60%/${(0.4 + engineIntensity * 0.4).toFixed(2)}) 0%, transparent 70%)`,
-              }}
-            />
-          </motion.div>
-        )}
-
-        {/* Rocket body with vibration */}
+        {/* Rocket body with vibration — exhaust inside so it stays centered under nozzles */}
         <motion.div
           className="relative"
           animate={
@@ -644,36 +570,111 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
             animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
-        </motion.div>
 
-        {/* Smoke clouds */}
-        {showSmoke && (
-          <div className="absolute top-[90%] left-1/2 -translate-x-1/2 pointer-events-none">
-            {SMOKE_CLOUDS.map((s) => (
+          {/* Exhaust particles — pinned to center (40px) of 80px SVG */}
+          {showParticles && (
+            <div className="absolute -translate-x-1/2 pointer-events-none" style={{ left: 40, top: 180 }}>
+              {PARTICLES.map((p) => (
+                <motion.div
+                  key={`p-${p.id}`}
+                  className="absolute rounded-full"
+                  style={{
+                    width: p.w,
+                    height: p.h,
+                    background: `hsl(${p.hue}, 100%, ${p.lightness}%)`,
+                    left: `${p.offsetX}px`,
+                    filter: "blur(1px)",
+                  }}
+                  animate={{
+                    y: [0, p.travelY],
+                    x: [0, p.driftX],
+                    opacity: [1, 0],
+                    scale: [1, 0.2],
+                  }}
+                  transition={{
+                    duration: p.duration,
+                    repeat: Infinity,
+                    delay: p.delay,
+                    ease: "easeOut",
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Main exhaust flame — pinned to center of nozzles */}
+          {showFlame && (
+            <motion.div
+              className="absolute -translate-x-1/2 origin-top"
+              style={{ left: 40, top: 180 }}
+              initial={{ scaleY: 0, opacity: 0 }}
+              animate={{ scaleY: 0.5 + engineIntensity * 1.5, opacity: engineIntensity }}
+            >
               <motion.div
-                key={`smoke-${s.id}`}
-                className="absolute rounded-full bg-muted-foreground/20"
+                className="w-16 h-40 relative"
+                animate={{ scaleY: [1, 1.1, 0.95, 1.05, 1] }}
+                transition={{ duration: 0.15, repeat: Infinity }}
+              >
+                {/* Outer flame */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, hsl(45,100%,70%) 0%, hsl(35,100%,55%) 20%, hsl(20,100%,50%) 50%, hsl(10,100%,40%) 70%, transparent 100%)",
+                    clipPath: "polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%)",
+                    filter: "blur(2px)",
+                  }}
+                />
+                {/* Inner flame */}
+                <div
+                  className="absolute inset-x-4 inset-y-0"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, hsl(50,100%,95%) 0%, hsl(45,100%,75%) 30%, hsl(40,100%,60%) 60%, transparent 100%)",
+                    clipPath: "polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)",
+                    filter: "blur(1px)",
+                  }}
+                />
+              </motion.div>
+              {/* Flame glow */}
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-48 rounded-full blur-xl pointer-events-none"
                 style={{
-                  width: s.size,
-                  height: s.size,
-                  filter: "blur(8px)",
-                }}
-                animate={{
-                  x: [0, s.driftX],
-                  y: [0, s.driftY],
-                  scale: [0.3, 1.5, 2],
-                  opacity: [0, 0.4, 0],
-                }}
-                transition={{
-                  duration: s.duration,
-                  repeat: Infinity,
-                  delay: s.delay,
-                  ease: "easeOut",
+                  background: `radial-gradient(ellipse, hsl(35,100%,60%/${(0.4 + engineIntensity * 0.4).toFixed(2)}) 0%, transparent 70%)`,
                 }}
               />
-            ))}
-          </div>
-        )}
+            </motion.div>
+          )}
+
+          {/* Smoke clouds — centered under rocket */}
+          {showSmoke && (
+            <div className="absolute -translate-x-1/2 pointer-events-none" style={{ left: 40, top: "90%" }}>
+              {SMOKE_CLOUDS.map((s) => (
+                <motion.div
+                  key={`smoke-${s.id}`}
+                  className="absolute rounded-full bg-muted-foreground/20"
+                  style={{
+                    width: s.size,
+                    height: s.size,
+                    filter: "blur(8px)",
+                  }}
+                  animate={{
+                    x: [0, s.driftX],
+                    y: [0, s.driftY],
+                    scale: [0.3, 1.5, 2],
+                    opacity: [0, 0.4, 0],
+                  }}
+                  transition={{
+                    duration: s.duration,
+                    repeat: Infinity,
+                    delay: s.delay,
+                    ease: "easeOut",
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </motion.div>
       </motion.div>
 
       {/* Title */}
