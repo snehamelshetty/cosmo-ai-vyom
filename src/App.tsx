@@ -5,9 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useCallback } from "react";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/AuthPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import AboutPage from "./pages/AboutPage";
 import SoundTherapyPage from "./pages/SoundTherapyPage";
@@ -24,6 +27,7 @@ import SkyViewerPage from "./pages/SkyViewerPage";
 import MoodJournalPage from "./pages/MoodJournalPage";
 import CrewCommunicationPage from "./pages/CrewCommunicationPage";
 import EnvironmentMonitoringPage from "./pages/EnvironmentMonitoringPage";
+import AIAssistantPage from "./pages/AIAssistantPage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +38,10 @@ const pageTransition = {
   transition: { duration: 0.35, ease: "easeInOut" as const },
 };
 
+const P = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute>{children}</ProtectedRoute>
+);
+
 const AnimatedRoutes = () => {
   const location = useLocation();
 
@@ -41,23 +49,25 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <motion.div key={location.pathname} {...pageTransition}>
         <Routes location={location}>
-          <Route path="/" element={<Index />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/sound-therapy" element={<SoundTherapyPage />} />
-          <Route path="/fitness-trainer" element={<FitnessTrainerPage />} />
-          <Route path="/psychological-support" element={<PsychologicalSupportPage />} />
-          <Route path="/fatigue-prediction" element={<FatiguePredictionPage />} />
-          <Route path="/health-monitoring" element={<HealthMonitoringPage />} />
-          <Route path="/mental-health" element={<MentalHealthPage />} />
-          <Route path="/physical-health" element={<PhysicalHealthPage />} />
-          <Route path="/before-after-space" element={<BeforeAfterSpacePage />} />
-          <Route path="/mission-vehicles" element={<MissionVehiclesPage />} />
-          <Route path="/galaxy-map" element={<GalaxyMapPage />} />
-          <Route path="/sky-viewer" element={<SkyViewerPage />} />
-          <Route path="/mood-journal" element={<MoodJournalPage />} />
-          <Route path="/crew-communication" element={<CrewCommunicationPage />} />
-          <Route path="/environment-monitoring" element={<EnvironmentMonitoringPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={<P><Index /></P>} />
+          <Route path="/features" element={<P><FeaturesPage /></P>} />
+          <Route path="/about" element={<P><AboutPage /></P>} />
+          <Route path="/sound-therapy" element={<P><SoundTherapyPage /></P>} />
+          <Route path="/fitness-trainer" element={<P><FitnessTrainerPage /></P>} />
+          <Route path="/psychological-support" element={<P><PsychologicalSupportPage /></P>} />
+          <Route path="/fatigue-prediction" element={<P><FatiguePredictionPage /></P>} />
+          <Route path="/health-monitoring" element={<P><HealthMonitoringPage /></P>} />
+          <Route path="/mental-health" element={<P><MentalHealthPage /></P>} />
+          <Route path="/physical-health" element={<P><PhysicalHealthPage /></P>} />
+          <Route path="/before-after-space" element={<P><BeforeAfterSpacePage /></P>} />
+          <Route path="/mission-vehicles" element={<P><MissionVehiclesPage /></P>} />
+          <Route path="/galaxy-map" element={<P><GalaxyMapPage /></P>} />
+          <Route path="/sky-viewer" element={<P><SkyViewerPage /></P>} />
+          <Route path="/mood-journal" element={<P><MoodJournalPage /></P>} />
+          <Route path="/crew-communication" element={<P><CrewCommunicationPage /></P>} />
+          <Route path="/environment-monitoring" element={<P><EnvironmentMonitoringPage /></P>} />
+          <Route path="/ai-assistant" element={<P><AIAssistantPage /></P>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
@@ -78,7 +88,9 @@ const App = () => {
           {loading && <LoadingScreen onComplete={handleLoadComplete} />}
         </AnimatePresence>
         <BrowserRouter>
-          <AnimatedRoutes />
+          <AuthProvider>
+            <AnimatedRoutes />
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
