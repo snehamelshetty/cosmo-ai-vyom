@@ -160,6 +160,24 @@ function analyzeHealthData(data: HealthDataPayload): { alerts: Array<{ type: str
   return { alerts };
 }
 
+// Helper to extract and validate the JWT from the Authorization header
+async function getAuthenticatedUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) return null;
+
+  const token = authHeader.replace('Bearer ', '');
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return null;
+  return user.id;
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -174,6 +192,15 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const path = url.pathname.split('/').pop();
 
+    // Authenticate the user
+    const userId = await getAuthenticatedUserId(req);
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // POST /crew-health-data - Receive health data from IoT device
     if (req.method === 'POST' && (!path || path === 'crew-health-data')) {
       const payload: HealthDataPayload = await req.json();
@@ -186,7 +213,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Insert health data
+      // Insert health data with user_id
       const { data: healthData, error: healthError } = await supabase
         .from('crew_health_data')
         .insert({
@@ -201,6 +228,7 @@ Deno.serve(async (req) => {
           device_id: payload.device_id,
           is_simulated: false,
           recorded_at: payload.timestamp || new Date().toISOString(),
+          user_id: userId,
         })
         .select()
         .single();
@@ -208,7 +236,7 @@ Deno.serve(async (req) => {
       if (healthError) {
         console.error('Health data insert error:', healthError);
         return new Response(
-          JSON.stringify({ error: healthError.message }),
+          JSON.stringify({ error: 'Failed to insert health data' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -216,7 +244,7 @@ Deno.serve(async (req) => {
       // Analyze data and generate alerts
       const analysis = analyzeHealthData(payload);
 
-      // Insert any alerts
+      // Insert any alerts with user_id
       if (analysis.alerts.length > 0) {
         const alertInserts = analysis.alerts.map(alert => ({
           crew_member: payload.crew_member,
@@ -226,6 +254,7 @@ Deno.serve(async (req) => {
           metric_name: alert.metric,
           metric_value: alert.value,
           threshold_value: alert.threshold,
+          user_id: userId,
         }));
 
         await supabase.from('health_alerts').insert(alertInserts);
@@ -236,7 +265,8 @@ Deno.serve(async (req) => {
         await supabase
           .from('iot_devices')
           .update({ last_sync_at: new Date().toISOString(), is_connected: true })
-          .eq('id', payload.device_id);
+          .eq('id', payload.device_id)
+          .eq('user_id', userId);
       }
 
       return new Response(
@@ -270,12 +300,13 @@ Deno.serve(async (req) => {
           last_sync_at: new Date().toISOString(),
         })
         .eq('id', payload.device_id)
+        .eq('user_id', userId)
         .select()
         .single();
 
       if (error) {
         return new Response(
-          JSON.stringify({ error: error.message }),
+          JSON.stringify({ error: 'Failed to update device status' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -286,16 +317,17 @@ Deno.serve(async (req) => {
       );
     }
 
-    // GET /devices - List all devices
+    // GET /devices - List user's devices
     if (req.method === 'GET' && path === 'devices') {
       const { data, error } = await supabase
         .from('iot_devices')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) {
         return new Response(
-          JSON.stringify({ error: error.message }),
+          JSON.stringify({ error: 'Failed to fetch devices' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -306,13 +338,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    // GET /latest - Get latest health data for all crew
+    // GET /latest - Get latest health data for authenticated user
     if (req.method === 'GET' && path === 'latest') {
       const crewMember = url.searchParams.get('crew_member');
       
       let query = supabase
         .from('crew_health_data')
         .select('*')
+        .eq('user_id', userId)
         .order('recorded_at', { ascending: false })
         .limit(crewMember ? 1 : 10);
 
@@ -324,7 +357,7 @@ Deno.serve(async (req) => {
 
       if (error) {
         return new Response(
-          JSON.stringify({ error: error.message }),
+          JSON.stringify({ error: 'Failed to fetch health data' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -335,18 +368,19 @@ Deno.serve(async (req) => {
       );
     }
 
-    // GET /alerts - Get active alerts
+    // GET /alerts - Get user's active alerts
     if (req.method === 'GET' && path === 'alerts') {
       const { data, error } = await supabase
         .from('health_alerts')
         .select('*')
+        .eq('user_id', userId)
         .eq('is_acknowledged', false)
         .order('created_at', { ascending: false })
         .limit(20);
 
       if (error) {
         return new Response(
-          JSON.stringify({ error: error.message }),
+          JSON.stringify({ error: 'Failed to fetch alerts' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
