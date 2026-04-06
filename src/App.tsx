@@ -28,6 +28,7 @@ import MoodJournalPage from "./pages/MoodJournalPage";
 import CrewCommunicationPage from "./pages/CrewCommunicationPage";
 import EnvironmentMonitoringPage from "./pages/EnvironmentMonitoringPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
+import CrewManagementPage from "./pages/CrewManagementPage";
 
 const queryClient = new QueryClient();
 
