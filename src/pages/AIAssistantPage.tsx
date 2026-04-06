@@ -69,7 +69,7 @@ const AIAssistantPage = () => {
   };
 
   return (
-    <PageLayout title="AI Assistant" subtitle="COSMO Onboard Intelligence">
+    <PageLayout>
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <div className="flex flex-col h-[calc(100vh-200px)] min-h-[500px]">
           {/* Header */}
