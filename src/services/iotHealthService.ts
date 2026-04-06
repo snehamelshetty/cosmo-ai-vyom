@@ -38,6 +38,12 @@ export interface HealthAlert {
   created_at: string;
 }
 
+// Helper to get current user id
+const getCurrentUserId = async (): Promise<string | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
+};
+
 // Simulated data generator for demo mode
 export const generateSimulatedData = (crewMember: string): HealthMetrics => {
   const baseHR = 70 + Math.floor(Math.random() * 15);
@@ -58,7 +64,7 @@ export const generateSimulatedData = (crewMember: string): HealthMetrics => {
   };
 };
 
-// Fetch latest health data from database
+// Fetch latest health data from database (scoped to current user via RLS)
 export const fetchLatestHealthData = async (crewMember?: string) => {
   let query = supabase
     .from('crew_health_data')
@@ -101,7 +107,7 @@ export const fetchHealthHistory = async (crewMember: string, hours: number = 24)
   return data || [];
 };
 
-// Fetch all IoT devices
+// Fetch all IoT devices (scoped to current user via RLS)
 export const fetchDevices = async (): Promise<IoTDevice[]> => {
   const { data, error } = await supabase
     .from('iot_devices')
@@ -116,7 +122,7 @@ export const fetchDevices = async (): Promise<IoTDevice[]> => {
   return data || [];
 };
 
-// Fetch active health alerts
+// Fetch active health alerts (scoped to current user via RLS)
 export const fetchHealthAlerts = async (): Promise<HealthAlert[]> => {
   const { data, error } = await supabase
     .from('health_alerts')
@@ -148,8 +154,14 @@ export const acknowledgeAlert = async (alertId: string) => {
   return true;
 };
 
-// Insert simulated data into database
+// Insert simulated data into database with user_id
 export const insertSimulatedData = async (metrics: HealthMetrics) => {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    console.error('No authenticated user found');
+    return false;
+  }
+
   const { error } = await supabase
     .from('crew_health_data')
     .insert({
@@ -163,6 +175,7 @@ export const insertSimulatedData = async (metrics: HealthMetrics) => {
       activity_level: metrics.activity_level,
       is_simulated: true,
       recorded_at: metrics.recorded_at,
+      user_id: userId,
     });
 
   if (error) {
@@ -173,11 +186,17 @@ export const insertSimulatedData = async (metrics: HealthMetrics) => {
   return true;
 };
 
-// Register a new IoT device
+// Register a new IoT device with user_id
 export const registerDevice = async (device: Omit<IoTDevice, 'id'>) => {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    console.error('No authenticated user found');
+    return null;
+  }
+
   const { data, error } = await supabase
     .from('iot_devices')
-    .insert(device)
+    .insert({ ...device, user_id: userId })
     .select()
     .single();
 
@@ -264,11 +283,11 @@ export const getApiEndpoint = () => {
 // Example ESP32 code snippet generator
 export const generateEsp32CodeSnippet = (deviceId: string, crewMember: string) => {
   const endpoint = getApiEndpoint();
-  const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   
   return `
 // ESP32 Health Sensor Code Example
 // Install: ArduinoJson, WiFi, HTTPClient libraries
+// NOTE: You must obtain a valid JWT token for authenticated requests.
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -277,7 +296,7 @@ export const generateEsp32CodeSnippet = (deviceId: string, crewMember: string) =
 const char* ssid = "YOUR_WIFI_SSID";
 const char* password = "YOUR_WIFI_PASSWORD";
 const char* endpoint = "${endpoint}";
-const char* apiKey = "${anonKey}";
+const char* authToken = "YOUR_JWT_TOKEN"; // Obtain via Supabase auth
 const char* deviceId = "${deviceId}";
 const char* crewMember = "${crewMember}";
 
@@ -286,8 +305,7 @@ void sendHealthData(int heartRate, float oxygenLevel, float bodyTemp, int hydrat
     HTTPClient http;
     http.begin(endpoint);
     http.addHeader("Content-Type", "application/json");
-    http.addHeader("apikey", apiKey);
-    http.addHeader("Authorization", String("Bearer ") + apiKey);
+    http.addHeader("Authorization", String("Bearer ") + authToken);
     
     StaticJsonDocument<256> doc;
     doc["crew_member"] = crewMember;
