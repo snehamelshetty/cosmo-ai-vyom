@@ -27,6 +27,8 @@ const featureLinks = [
 
 const NavBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [featuresOpen, setFeaturesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -122,11 +124,24 @@ const NavBar = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <Link to="/ai-assistant"
+            className={`hidden md:flex items-center gap-1 px-3 py-1.5 rounded-md text-[9px] font-mono transition-all duration-300 tracking-[0.12em] uppercase ${
+              location.pathname === "/ai-assistant" ? "text-primary bg-primary/8 text-glow-star" : "text-muted-foreground hover:text-primary/70 hover:bg-primary/5"
+            }`}>
+            <Bot className="w-3 h-3" />
+            AI
+          </Link>
           <span className="hidden md:flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-glow-green/60 animate-pulse" />
             <span className="text-[10px] font-mono text-muted-foreground/60 tracking-wider">ONLINE</span>
           </span>
-
+          <button
+            onClick={async () => { await signOut(); navigate("/auth"); }}
+            className="hidden md:flex items-center gap-1 px-2 py-1.5 rounded-md text-[9px] font-mono text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all tracking-[0.12em]"
+          >
+            <LogOut className="w-3 h-3" />
+            EXIT
+          </button>
 
           <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden text-muted-foreground hover:text-foreground transition-colors">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
