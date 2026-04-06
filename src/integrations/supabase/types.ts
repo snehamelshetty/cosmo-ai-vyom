@@ -29,6 +29,7 @@ export type Database = {
           recorded_at: string
           sleep_quality: number | null
           stress_level: number | null
+          user_id: string | null
         }
         Insert: {
           activity_level?: string | null
@@ -44,6 +45,7 @@ export type Database = {
           recorded_at?: string
           sleep_quality?: number | null
           stress_level?: number | null
+          user_id?: string | null
         }
         Update: {
           activity_level?: string | null
@@ -59,6 +61,7 @@ export type Database = {
           recorded_at?: string
           sleep_quality?: number | null
           stress_level?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -83,6 +86,7 @@ export type Database = {
           metric_value: number | null
           severity: string
           threshold_value: number | null
+          user_id: string | null
         }
         Insert: {
           acknowledged_at?: string | null
@@ -96,6 +100,7 @@ export type Database = {
           metric_value?: number | null
           severity?: string
           threshold_value?: number | null
+          user_id?: string | null
         }
         Update: {
           acknowledged_at?: string | null
@@ -109,6 +114,7 @@ export type Database = {
           metric_value?: number | null
           severity?: string
           threshold_value?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -125,6 +131,7 @@ export type Database = {
           last_sync_at: string | null
           signal_strength: number | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           battery_level?: number | null
@@ -138,6 +145,7 @@ export type Database = {
           last_sync_at?: string | null
           signal_strength?: number | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           battery_level?: number | null
@@ -151,6 +159,7 @@ export type Database = {
           last_sync_at?: string | null
           signal_strength?: number | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
