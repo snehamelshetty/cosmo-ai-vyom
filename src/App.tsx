@@ -28,6 +28,7 @@ import MoodJournalPage from "./pages/MoodJournalPage";
 import CrewCommunicationPage from "./pages/CrewCommunicationPage";
 import EnvironmentMonitoringPage from "./pages/EnvironmentMonitoringPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
+import CrewManagementPage from "./pages/CrewManagementPage";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const AnimatedRoutes = () => {
           <Route path="/crew-communication" element={<P><CrewCommunicationPage /></P>} />
           <Route path="/environment-monitoring" element={<P><EnvironmentMonitoringPage /></P>} />
           <Route path="/ai-assistant" element={<P><AIAssistantPage /></P>} />
+          <Route path="/crew-management" element={<P><CrewManagementPage /></P>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>

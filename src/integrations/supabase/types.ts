@@ -73,6 +73,54 @@ export type Database = {
           },
         ]
       }
+      crew_profiles: {
+        Row: {
+          age: number | null
+          avatar_initials: string
+          bio: string | null
+          blood_type: string | null
+          created_at: string
+          crew_member_id: string
+          id: string
+          name: string
+          role: string
+          specialization: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          avatar_initials?: string
+          bio?: string | null
+          blood_type?: string | null
+          created_at?: string
+          crew_member_id: string
+          id?: string
+          name: string
+          role?: string
+          specialization?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          avatar_initials?: string
+          bio?: string | null
+          blood_type?: string | null
+          created_at?: string
+          crew_member_id?: string
+          id?: string
+          name?: string
+          role?: string
+          specialization?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       health_alerts: {
         Row: {
           acknowledged_at: string | null

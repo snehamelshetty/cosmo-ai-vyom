@@ -14,6 +14,7 @@ const mainLinks = [
 ];
 
 const featureLinks = [
+  { label: "Crew Management", path: "/crew-management" },
   { label: "Mood Journal", path: "/mood-journal" },
   { label: "Crew Communication", path: "/crew-communication" },
   { label: "Environment Monitoring", path: "/environment-monitoring" },
