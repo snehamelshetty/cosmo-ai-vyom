@@ -1,12 +1,12 @@
-import { ReactNode } from "react";
+import { ReactNode, forwardRef } from "react";
 import StarField from "./StarField";
 import NavBar from "./NavBar";
 import FloatingSpaceElements from "./FloatingSpaceElements";
 import RelaxationMode from "./RelaxationMode";
 
-const PageLayout = ({ children }: { children: ReactNode }) => {
+const PageLayout = forwardRef<HTMLDivElement, { children: ReactNode }>(({ children }, ref) => {
   return (
-    <div className="relative min-h-screen bg-background overflow-x-hidden">
+    <div ref={ref} className="relative min-h-screen bg-background overflow-x-hidden">
       <StarField />
       <FloatingSpaceElements />
       <NavBar />
@@ -16,6 +16,8 @@ const PageLayout = ({ children }: { children: ReactNode }) => {
       <RelaxationMode />
     </div>
   );
-};
+});
+
+PageLayout.displayName = "PageLayout";
 
 export default PageLayout;

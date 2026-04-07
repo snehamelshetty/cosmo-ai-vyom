@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2, VolumeX } from "lucide-react";
 import milkywayBg from "@/assets/milkyway-bg.jpg";
@@ -13,7 +13,7 @@ const sounds = [
   { name: "Night", emoji: "🦗", freq: 250 },
 ];
 
-const RelaxationMode = () => {
+const RelaxationMode = forwardRef<HTMLDivElement>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSound, setActiveSound] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(false);
@@ -197,6 +197,8 @@ const RelaxationMode = () => {
       </AnimatePresence>
     </>
   );
-};
+});
+
+RelaxationMode.displayName = "RelaxationMode";
 
 export default RelaxationMode;

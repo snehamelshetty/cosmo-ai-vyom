@@ -40,7 +40,7 @@ const SpaceDataDashboard = () => {
   const fetchISS = async (refresh = false) => {
     if (refresh) setIssRefreshing(true);
     try {
-      const res = await fetch("http://api.open-notify.org/iss-now.json");
+      const res = await fetch("https://api.open-notify.org/iss-now.json");
       if (res.ok) {
         const data = await res.json();
         setIss({
