@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ReactNode, forwardRef } from "react";
 import { motion } from "framer-motion";
 
 interface HoloPanelProps {
@@ -9,9 +9,10 @@ interface HoloPanelProps {
   delay?: number;
 }
 
-const HoloPanel = ({ children, className, variant = "star", delay = 0 }: HoloPanelProps) => {
+const HoloPanel = forwardRef<HTMLDivElement, HoloPanelProps>(({ children, className, variant = "star", delay = 0 }, ref) => {
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -25,6 +26,8 @@ const HoloPanel = ({ children, className, variant = "star", delay = 0 }: HoloPan
       <div className="relative z-10">{children}</div>
     </motion.div>
   );
-};
+});
+
+HoloPanel.displayName = "HoloPanel";
 
 export default HoloPanel;
