@@ -198,6 +198,8 @@ const RelaxationMode = () => {
       </AnimatePresence>
     </>
   );
-};
+});
+
+RelaxationMode.displayName = "RelaxationMode";
 
 export default RelaxationMode;
