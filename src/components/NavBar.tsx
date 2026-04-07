@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, LogOut, Bot } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import cosmoLogo from "@/assets/cosmo-logo.png";
 
 const mainLinks = [
   { label: "Home", path: "/" },
@@ -55,7 +56,8 @@ const NavBar = () => {
       className="fixed top-0 left-0 right-0 z-40 border-b border-border/20 backdrop-blur-2xl bg-background/40"
     >
       <div className="container mx-auto max-w-7xl px-4 h-14 flex items-center justify-between">
-        <Link to="/" className="font-orbitron font-bold text-sm text-primary/80 text-glow-star tracking-[0.3em] hover:text-primary transition-colors">
+        <Link to="/" className="flex items-center gap-2 font-orbitron font-bold text-sm text-primary/80 text-glow-star tracking-[0.3em] hover:text-primary transition-colors">
+          <img src={cosmoLogo} alt="COSMO logo" width={28} height={28} className="rounded-full" />
           COSMO
         </Link>
 
