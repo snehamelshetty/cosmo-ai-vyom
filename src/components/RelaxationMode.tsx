@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2, VolumeX } from "lucide-react";
 import milkywayBg from "@/assets/milkyway-bg.jpg";
 
-const sounds = [
+const RelaxationMode = forwardRef<HTMLDivElement>((_, ref) => {
+  const sounds = [
   { name: "Forest", emoji: "🌲", freq: 200 },
   { name: "Rain", emoji: "🌧️", freq: 150 },
   { name: "Ocean", emoji: "🌊", freq: 100 },
