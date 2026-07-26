@@ -37,7 +37,7 @@ const jitter = (base: number, range: number, min = 0, max = 100) =>
 // ─── Base Crew Profiles ─────────────────────────────────────
 const crewProfiles = [
   {
-    id: "commander", name: "Cmdr. Elena Vasquez", role: "Commander", avatar: "EV",
+    id: "commander", name: "Cmdr. Sneha Bhimarao Melshetty\u00a0", role: "Commander", avatar: "SB",
     baseHR: 72, baseStress: 22, baseO2: 98, baseTemp: 36.6,
     emotional: { calm: 72, focused: 85, anxiety: 8, fatigue: 15, motivation: 90, isolation: 12 },
     cognitive: [
@@ -57,7 +57,7 @@ const crewProfiles = [
     baseAiStatus: "Nominal — Low stress detected",
   },
   {
-    id: "engineer", name: "Eng. Mikhail Petrov", role: "Engineer", avatar: "MP",
+    id: "engineer", name: "Eng. Kaivalya M\u00a0", role: "Engineer", avatar: "KM",
     baseHR: 76, baseStress: 31, baseO2: 97, baseTemp: 36.8,
     emotional: { calm: 55, focused: 78, anxiety: 22, fatigue: 35, motivation: 72, isolation: 28 },
     cognitive: [
@@ -77,7 +77,7 @@ const crewProfiles = [
     baseAiStatus: "Caution — Elevated fatigue markers",
   },
   {
-    id: "scientist", name: "Dr. Aisha Rahman", role: "Scientist", avatar: "AR",
+    id: "scientist", name: "Dr. Anjali\u00a0", role: "Scientist", avatar: "DA",
     baseHR: 69, baseStress: 18, baseO2: 99, baseTemp: 36.5,
     emotional: { calm: 82, focused: 90, anxiety: 5, fatigue: 10, motivation: 95, isolation: 8 },
     cognitive: [
@@ -97,7 +97,7 @@ const crewProfiles = [
     baseAiStatus: "Nominal — Optimal cognitive performance",
   },
   {
-    id: "pilot", name: "Lt. James Park", role: "Pilot", avatar: "JP",
+    id: "pilot", name: "Lt. Soumya M Patil\u00a0", role: "Pilot", avatar: "SP",
     baseHR: 74, baseStress: 26, baseO2: 98, baseTemp: 36.7,
     emotional: { calm: 62, focused: 80, anxiety: 15, fatigue: 30, motivation: 78, isolation: 20 },
     cognitive: [

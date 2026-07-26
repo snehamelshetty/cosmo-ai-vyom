@@ -252,7 +252,7 @@ const CrewManagementPage = () => {
                       <Input
                         value={formData.name}
                         onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
-                        placeholder="e.g. Cmdr. Elena Vasquez"
+                        placeholder="e.g. Cmdr. Sneha Bhimarao Melshetty"
                       />
                     </div>
                     <div>
