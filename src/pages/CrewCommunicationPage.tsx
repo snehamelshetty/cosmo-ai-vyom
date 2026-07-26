@@ -7,7 +7,7 @@ import { Radio, Send, Users, Bell, Wifi, Clock, ChevronRight } from "lucide-reac
 
 const crewMembers = [
   { name: "Commander Chen", role: "CDR", status: "online", avatar: "👨‍🚀" },
-  { name: "Dr. Vasquez", role: "ENG", status: "online", avatar: "👩‍🔬" },
+  { name: "Dr. Anjali", role: "ENG", status: "online", avatar: "👩‍🔬" },
   { name: "Dr. Kim", role: "SCI", status: "away", avatar: "🧑‍🔬" },
   { name: "Lt. Brooks", role: "PLT", status: "online", avatar: "👨‍✈️" },
   { name: "Mission Control", role: "MCC", status: "online", avatar: "🛰️" },
@@ -35,7 +35,7 @@ const autoResponses = [
 const initialMessages: Message[] = [
   { from: "Mission Control", text: "Good morning crew. All systems are nominal. Daily briefing at 0800 UTC.", time: "05:45", type: "system" },
   { from: "Commander Chen", text: "Copy that, MCC. Crew status: all members rested and ready.", time: "05:48", type: "crew" },
-  { from: "Dr. Vasquez", text: "Engineering report: Life support at 100%. Power reserves at 94%.", time: "06:02", type: "crew" },
+  { from: "Dr. Anjali", text: "Engineering report: Life support at 100%. Power reserves at 94%.", time: "06:02", type: "crew" },
   { from: "Dr. Kim", text: "Science bay samples from yesterday's EVA show promising results.", time: "06:15", type: "crew" },
   { from: "Mission Control", text: "Excellent work team. Reminder: orbital adjustment burn at 0900.", time: "06:22", type: "system" },
 ];
