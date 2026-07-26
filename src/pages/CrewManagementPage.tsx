@@ -227,6 +227,29 @@ const CrewManagementPage = () => {
     setShowSensorForm(false);
   };
 
+  const handleLoadDefaultCrew = async () => {
+    setLoading(true);
+    const existing = new Set(profiles.map(p => p.crew_member_id));
+    const rows = DEFAULT_CREW.filter(c => !existing.has(c.crew_member_id)).map(c => ({
+      ...c,
+      user_id: user?.id,
+    }));
+    if (rows.length === 0) {
+      toast.info("Default crew already loaded");
+      setLoading(false);
+      return;
+    }
+    const { error } = await supabase.from("crew_profiles").insert(rows);
+    if (error) {
+      toast.error("Failed to load default crew");
+      console.error(error);
+      setLoading(false);
+      return;
+    }
+    toast.success("Default crew roster loaded");
+    fetchProfiles();
+  };
+
   const cancelForm = () => {
     setShowAddForm(false);
     setEditingId(null);
