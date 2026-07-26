@@ -7,7 +7,7 @@ import nebulaBg from "@/assets/nebula-section.jpg";
 
 const crewData = [
   {
-    name: "Cmdr. Elena Vasquez",
+    name: "Cmdr. Sneha Bhimarao Melshetty\u00a0",
     role: "Mission Commander",
     mental: 92, fatigue: 15, cognitive: 94, social: 88,
     metrics: [
@@ -33,7 +33,7 @@ const crewData = [
     mood: [{ day: "M", val: 85 }, { day: "T", val: 88 }, { day: "W", val: 82 }, { day: "T", val: 90 }, { day: "F", val: 87 }, { day: "S", val: 92 }, { day: "S", val: 94 }],
   },
   {
-    name: "Dr. James Park",
+    name: "Dr. Anjali\u00a0",
     role: "Flight Surgeon",
     mental: 87, fatigue: 22, cognitive: 89, social: 91,
     metrics: [
@@ -59,7 +59,7 @@ const crewData = [
     mood: [{ day: "M", val: 78 }, { day: "T", val: 82 }, { day: "W", val: 80 }, { day: "T", val: 85 }, { day: "F", val: 83 }, { day: "S", val: 87 }, { day: "S", val: 90 }],
   },
   {
-    name: "Lt. Anika Sharma",
+    name: "Lt. Soumya M Patil\u00a0",
     role: "Pilot",
     mental: 78, fatigue: 35, cognitive: 85, social: 72,
     metrics: [
@@ -85,7 +85,7 @@ const crewData = [
     mood: [{ day: "M", val: 65 }, { day: "T", val: 70 }, { day: "W", val: 68 }, { day: "T", val: 75 }, { day: "F", val: 72 }, { day: "S", val: 78 }, { day: "S", val: 80 }],
   },
   {
-    name: "Eng. Mikhail Petrov",
+    name: "Eng. Kaivalya M\u00a0",
     role: "Systems Engineer",
     mental: 84, fatigue: 28, cognitive: 91, social: 80,
     metrics: [
