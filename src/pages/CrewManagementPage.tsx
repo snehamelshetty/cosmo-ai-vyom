@@ -512,10 +512,15 @@ const CrewManagementPage = () => {
               <div className="text-center py-12">
                 <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-orbitron text-lg text-foreground mb-2">No Crew Members</h3>
-                <p className="text-sm text-muted-foreground mb-4">Add your first crew member to get started</p>
-                <Button onClick={() => setShowAddForm(true)} className="gap-2">
-                  <UserPlus className="w-4 h-4" /> Add Crew Member
-                </Button>
+                <p className="text-sm text-muted-foreground mb-4">Add your first crew member or load the default roster</p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button onClick={() => setShowAddForm(true)} className="gap-2">
+                    <UserPlus className="w-4 h-4" /> Add Crew Member
+                  </Button>
+                  <Button variant="outline" onClick={handleLoadDefaultCrew} className="gap-2">
+                    <Users className="w-4 h-4" /> Load Default Crew
+                  </Button>
+                </div>
               </div>
             </HoloPanel>
           ) : (
