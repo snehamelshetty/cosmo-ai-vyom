@@ -67,6 +67,53 @@ const emptySensor: SensorEntry = {
   activity_level: "resting",
 };
 
+const DEFAULT_CREW: Omit<CrewProfile, "id">[] = [
+  {
+    crew_member_id: "CDR-001",
+    name: "Cmdr. Sneha Bhimarao Melshetty",
+    role: "commander",
+    avatar_initials: "SM",
+    bio: "Mission commander overseeing all flight operations and crew safety.",
+    age: 38,
+    blood_type: "O+",
+    specialization: "Flight Operations",
+    status: "active",
+  },
+  {
+    crew_member_id: "MED-002",
+    name: "Dr. Anjali",
+    role: "medical_officer",
+    avatar_initials: "DA",
+    bio: "Flight surgeon monitoring crew health and biomedical research.",
+    age: 35,
+    blood_type: "A+",
+    specialization: "Space Medicine",
+    status: "active",
+  },
+  {
+    crew_member_id: "PLT-003",
+    name: "Lt. Soumya M Patil",
+    role: "pilot",
+    avatar_initials: "SP",
+    bio: "Pilot responsible for docking maneuvers and orbital navigation.",
+    age: 32,
+    blood_type: "B+",
+    specialization: "Orbital Navigation",
+    status: "active",
+  },
+  {
+    crew_member_id: "ENG-004",
+    name: "Eng. Kaivalya M",
+    role: "engineer",
+    avatar_initials: "KM",
+    bio: "Systems engineer maintaining life support and power systems.",
+    age: 34,
+    blood_type: "AB+",
+    specialization: "Life Support Systems",
+    status: "active",
+  },
+];
+
 const CrewManagementPage = () => {
   const { user } = useAuth();
   const [profiles, setProfiles] = useState<CrewProfile[]>([]);
