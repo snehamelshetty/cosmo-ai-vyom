@@ -67,6 +67,53 @@ const emptySensor: SensorEntry = {
   activity_level: "resting",
 };
 
+const DEFAULT_CREW: Omit<CrewProfile, "id">[] = [
+  {
+    crew_member_id: "CDR-001",
+    name: "Cmdr. Sneha Bhimarao Melshetty",
+    role: "commander",
+    avatar_initials: "SM",
+    bio: "Mission commander overseeing all flight operations and crew safety.",
+    age: 38,
+    blood_type: "O+",
+    specialization: "Flight Operations",
+    status: "active",
+  },
+  {
+    crew_member_id: "MED-002",
+    name: "Dr. Anjali",
+    role: "medical_officer",
+    avatar_initials: "DA",
+    bio: "Flight surgeon monitoring crew health and biomedical research.",
+    age: 35,
+    blood_type: "A+",
+    specialization: "Space Medicine",
+    status: "active",
+  },
+  {
+    crew_member_id: "PLT-003",
+    name: "Lt. Soumya M Patil",
+    role: "pilot",
+    avatar_initials: "SP",
+    bio: "Pilot responsible for docking maneuvers and orbital navigation.",
+    age: 32,
+    blood_type: "B+",
+    specialization: "Orbital Navigation",
+    status: "active",
+  },
+  {
+    crew_member_id: "ENG-004",
+    name: "Eng. Kaivalya M",
+    role: "engineer",
+    avatar_initials: "KM",
+    bio: "Systems engineer maintaining life support and power systems.",
+    age: 34,
+    blood_type: "AB+",
+    specialization: "Life Support Systems",
+    status: "active",
+  },
+];
+
 const CrewManagementPage = () => {
   const { user } = useAuth();
   const [profiles, setProfiles] = useState<CrewProfile[]>([]);
@@ -178,6 +225,29 @@ const CrewManagementPage = () => {
     toast.success("Sensor data recorded");
     setSensorData(emptySensor);
     setShowSensorForm(false);
+  };
+
+  const handleLoadDefaultCrew = async () => {
+    setLoading(true);
+    const existing = new Set(profiles.map(p => p.crew_member_id));
+    const rows = DEFAULT_CREW.filter(c => !existing.has(c.crew_member_id)).map(c => ({
+      ...c,
+      user_id: user?.id,
+    }));
+    if (rows.length === 0) {
+      toast.info("Default crew already loaded");
+      setLoading(false);
+      return;
+    }
+    const { error } = await supabase.from("crew_profiles").insert(rows);
+    if (error) {
+      toast.error("Failed to load default crew");
+      console.error(error);
+      setLoading(false);
+      return;
+    }
+    toast.success("Default crew roster loaded");
+    fetchProfiles();
   };
 
   const cancelForm = () => {
@@ -442,10 +512,15 @@ const CrewManagementPage = () => {
               <div className="text-center py-12">
                 <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-orbitron text-lg text-foreground mb-2">No Crew Members</h3>
-                <p className="text-sm text-muted-foreground mb-4">Add your first crew member to get started</p>
-                <Button onClick={() => setShowAddForm(true)} className="gap-2">
-                  <UserPlus className="w-4 h-4" /> Add Crew Member
-                </Button>
+                <p className="text-sm text-muted-foreground mb-4">Add your first crew member or load the default roster</p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button onClick={() => setShowAddForm(true)} className="gap-2">
+                    <UserPlus className="w-4 h-4" /> Add Crew Member
+                  </Button>
+                  <Button variant="outline" onClick={handleLoadDefaultCrew} className="gap-2">
+                    <Users className="w-4 h-4" /> Load Default Crew
+                  </Button>
+                </div>
               </div>
             </HoloPanel>
           ) : (
